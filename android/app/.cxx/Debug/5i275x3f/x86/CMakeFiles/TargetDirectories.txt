@@ -1,0 +1,2 @@
+C:/projects/clients/Handyman/handyman_anas_albedaiwi_user/android/app/.cxx/Debug/5i275x3f/x86/CMakeFiles/edit_cache.dir
+C:/projects/clients/Handyman/handyman_anas_albedaiwi_user/android/app/.cxx/Debug/5i275x3f/x86/CMakeFiles/rebuild_cache.dir

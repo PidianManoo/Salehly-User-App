@@ -1,0 +1,214 @@
+{
+  "project_info": {
+    "project_number": "763658336650",
+    "project_id": "salehly-ea380",
+    "storage_bucket": "salehly-ea380.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763658336650:android:3d66d60e7484404dc83073",
+        "android_client_info": {
+          "package_name": "app.company.salehly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763658336650-4l1rmeevkfhsdc8vep6g9q0pqhcleph2.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "app.company.salehly",
+            "certificate_hash": "f7f01d1070cc0a89b033b34dd76dadd63ef52d24"
+          }
+        },
+        {
+          "client_id": "763658336650-2g05cb9nj6891834b5tamht3qtrn4lll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGMQenAtBIqY5jxA9ArUtXBZ33jC0cCwc"
+        },
+        {
+          "current_key": "AIzaSyDv1uYoXrXEhAzytFwfIOrsThQ8ICLnXhk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "763658336650-2g05cb9nj6891834b5tamht3qtrn4lll.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "763658336650-7iq4j27dkd43bgft95l5vfp6cj0kn6u2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.salehly.provider"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763658336650:android:9d9e6cc0bee36584c83073",
+        "android_client_info": {
+          "package_name": "app.company.salehlyProvider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763658336650-2g05cb9nj6891834b5tamht3qtrn4lll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGMQenAtBIqY5jxA9ArUtXBZ33jC0cCwc"
+        },
+        {
+          "current_key": "AIzaSyDv1uYoXrXEhAzytFwfIOrsThQ8ICLnXhk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "763658336650-2g05cb9nj6891834b5tamht3qtrn4lll.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "763658336650-7iq4j27dkd43bgft95l5vfp6cj0kn6u2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.salehly.provider"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763658336650:android:486515042abd720fc83073",
+        "android_client_info": {
+          "package_name": "com.salehly.provider"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763658336650-mbakudjud641dc67qpa6a5bcfa37g77k.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.salehly.provider",
+            "certificate_hash": "f7f01d1070cc0a89b033b34dd76dadd63ef52d24"
+          }
+        },
+        {
+          "client_id": "763658336650-mf397e16a6tr4ngnseim4jou3g9knk0h.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.salehly.provider",
+            "certificate_hash": "e1746be6573c5fc86e34027b13931d686d809efe"
+          }
+        },
+        {
+          "client_id": "763658336650-2g05cb9nj6891834b5tamht3qtrn4lll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGMQenAtBIqY5jxA9ArUtXBZ33jC0cCwc"
+        },
+        {
+          "current_key": "AIzaSyDv1uYoXrXEhAzytFwfIOrsThQ8ICLnXhk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "763658336650-2g05cb9nj6891834b5tamht3qtrn4lll.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "763658336650-7iq4j27dkd43bgft95l5vfp6cj0kn6u2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.salehly.provider"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:763658336650:android:322e364b32297e6bc83073",
+        "android_client_info": {
+          "package_name": "com.salehly.user"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "763658336650-0g879rhjo4faubl04ue1vo2ak065i7kf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.salehly.user",
+            "certificate_hash": "e640594ba9247e85d47c2c11def0d69826f6d599"
+          }
+        },
+        {
+          "client_id": "763658336650-dhfkl1461dje7s7i0b8stbth0iv7et67.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.salehly.user",
+            "certificate_hash": "afeea2b80d10c464c5224d3588b5f1764e93e038"
+          }
+        },
+        {
+          "client_id": "763658336650-tuq8r9npuo03inhct3gqotsv0mgh5t6v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.salehly.user",
+            "certificate_hash": "cff24922b1f23981bb0b99cc3df602df08c1a348"
+          }
+        },
+        {
+          "client_id": "763658336650-2g05cb9nj6891834b5tamht3qtrn4lll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCGMQenAtBIqY5jxA9ArUtXBZ33jC0cCwc"
+        },
+        {
+          "current_key": "AIzaSyDv1uYoXrXEhAzytFwfIOrsThQ8ICLnXhk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "763658336650-2g05cb9nj6891834b5tamht3qtrn4lll.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "763658336650-7iq4j27dkd43bgft95l5vfp6cj0kn6u2.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.salehly.provider"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
