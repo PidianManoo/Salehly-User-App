@@ -1,4 +1,4 @@
-﻿import 'package:booking_system_flutter/component/base_scaffold_widget.dart';
+import 'package:booking_system_flutter/component/base_scaffold_widget.dart';
 import 'package:booking_system_flutter/screens/booking/provider_info_screen.dart';
 import 'package:booking_system_flutter/screens/service/shimmer/view_all_service_shimmer.dart';
 import 'package:booking_system_flutter/store/filter_store.dart';
@@ -103,6 +103,14 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
       },
     );
     setState(() {});
+
+    // shopList is only mutated once this future resolves — rebuild again
+    // then so anything reading its length directly (e.g. the result count)
+    // doesn't stay stale until some unrelated tap forces another build.
+    try {
+      await future;
+    } catch (_) {}
+    setState(() {});
   }
 
   void fetchCategoryList() async {
@@ -144,6 +152,14 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
     );
 
     setState(() {});
+
+    // serviceList is only mutated once this future resolves — rebuild again
+    // then so anything reading its length directly (e.g. the result count)
+    // doesn't stay stale until some unrelated tap forces another build.
+    try {
+      await futureService;
+    } catch (_) {}
+    setState(() {});
   }
 
   String get setSearchString {
@@ -171,15 +187,15 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
           crossAxisAlignment: CrossAxisAlignment.start,
           mainAxisSize: MainAxisSize.min,
           children: [
-            16.height,
-            Text(language.lblSubcategories,
-                    style: boldTextStyle(size: LABEL_TEXT_SIZE))
+            10.height,
+            Text(language.lblSubcategories, style: boldTextStyle(size: 13))
                 .paddingLeft(16),
+            8.height,
             HorizontalList(
               itemCount: list.validate().length,
               padding: EdgeInsets.only(left: 16, right: 16),
               runSpacing: 8,
-              spacing: 12,
+              spacing: 8,
               itemBuilder: (_, index) {
                 CategoryData data = list[index];
 
@@ -187,6 +203,35 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
                   builder: (_) {
                     bool isSelected =
                         filterStore.selectedSubCategoryId == index;
+
+                    Widget iconSlot;
+                    if (index == 0) {
+                      iconSlot = Icon(Icons.apps_rounded,
+                          size: 14,
+                          color:
+                              isSelected ? Colors.white : context.primaryColor);
+                    } else if (data.categoryImage.validate().endsWith('.svg')) {
+                      iconSlot = SvgPicture.network(
+                        data.categoryImage.validate(),
+                        height: 14,
+                        width: 14,
+                        color: isSelected
+                            ? Colors.white
+                            : (appStore.isDarkMode
+                                ? Colors.white
+                                : data.color.validate(value: '000').toColor()),
+                        placeholderBuilder: (context) => PlaceHolderWidget(
+                            height: 14, width: 14, color: transparentColor),
+                      );
+                    } else {
+                      iconSlot = CachedImageWidget(
+                        url: data.categoryImage.validate(),
+                        fit: BoxFit.cover,
+                        width: 14,
+                        height: 14,
+                        circle: true,
+                      );
+                    }
 
                     return GestureDetector(
                       onTap: () {
@@ -200,89 +245,43 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
 
                         setState(() {});
                       },
-                      child: SizedBox(
-                        width: context.width() / 4 - 20,
-                        child: Stack(
-                          clipBehavior: Clip.none,
+                      child: AnimatedContainer(
+                        duration: Duration(milliseconds: 220),
+                        curve: Curves.easeOut,
+                        padding:
+                            EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected
+                              ? context.primaryColor
+                              : Colors.transparent,
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(
+                            color: isSelected
+                                ? context.primaryColor
+                                : context.dividerColor,
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
                           children: [
-                            Column(
-                              children: [
-                                16.height,
-                                if (index == 0)
-                                  Container(
-                                    height: CATEGORY_ICON_SIZE,
-                                    width: CATEGORY_ICON_SIZE,
-                                    decoration: BoxDecoration(
-                                        color: context.cardColor,
-                                        shape: BoxShape.circle,
-                                        border: Border.all(color: grey)),
-                                    alignment: Alignment.center,
-                                    child: Text(data.name.validate(),
-                                        style: boldTextStyle(size: 12)),
-                                  ),
-                                if (index != 0)
-                                  data.categoryImage.validate().endsWith('.svg')
-                                      ? Container(
-                                          width: CATEGORY_ICON_SIZE,
-                                          height: CATEGORY_ICON_SIZE,
-                                          padding: EdgeInsets.all(8),
-                                          decoration: BoxDecoration(
-                                              color: context.cardColor,
-                                              shape: BoxShape.circle),
-                                          child: SvgPicture.network(
-                                            data.categoryImage.validate(),
-                                            height: CATEGORY_ICON_SIZE,
-                                            width: CATEGORY_ICON_SIZE,
-                                            color: appStore.isDarkMode
-                                                ? Colors.white
-                                                : data.color
-                                                    .validate(value: '000')
-                                                    .toColor(),
-                                            placeholderBuilder: (context) =>
-                                                PlaceHolderWidget(
-                                                    height: CATEGORY_ICON_SIZE,
-                                                    width: CATEGORY_ICON_SIZE,
-                                                    color: transparentColor),
-                                          ),
-                                        )
-                                      : Container(
-                                          padding: EdgeInsets.all(12),
-                                          decoration: BoxDecoration(
-                                              color: context.cardColor,
-                                              shape: BoxShape.circle),
-                                          child: CachedImageWidget(
-                                            url: data.categoryImage.validate(),
-                                            fit: BoxFit.fitWidth,
-                                            width: SUBCATEGORY_ICON_SIZE,
-                                            height: SUBCATEGORY_ICON_SIZE,
-                                            circle: true,
-                                          ),
-                                        ),
-                                4.height,
-                                if (index == 0)
-                                  Text(language.lblViewAll,
-                                      style: boldTextStyle(size: 12),
-                                      textAlign: TextAlign.center,
-                                      maxLines: 1),
-                                if (index != 0)
-                                  Marquee(
-                                      child: Text('${data.name.validate()}',
-                                          style: boldTextStyle(size: 12),
-                                          textAlign: TextAlign.center,
-                                          maxLines: 1)),
-                              ],
+                            SizedBox(height: 13, width: 13, child: iconSlot),
+                            6.width,
+                            Text(
+                              index == 0
+                                  ? language.lblViewAll
+                                  : data.name.validate(),
+                              style: boldTextStyle(
+                                size: 12,
+                                color: isSelected
+                                    ? Colors.white
+                                    : (appStore.isDarkMode
+                                        ? Colors.white
+                                        : appTextPrimaryColor),
+                              ),
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
                             ),
-                            Positioned(
-                              top: 14,
-                              right: 0,
-                              child: Container(
-                                padding: EdgeInsets.all(2),
-                                decoration: boxDecorationDefault(
-                                    color: context.primaryColor),
-                                child: Icon(Icons.done,
-                                    size: 16, color: Colors.white),
-                              ).visible(isSelected),
-                            )
                           ],
                         ),
                       ),
@@ -291,7 +290,7 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
                 );
               },
             ),
-            16.height,
+            10.height,
           ],
         );
       },
@@ -347,93 +346,183 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
           disposeScrollController: true,
           itemBuilder: (BuildContext context, index) {
             var shopData = snap[index];
+            final String thumbnailUrl =
+                shopData.shopAttachment.validate().isNotEmpty
+                    ? shopData.shopAttachment!.first.url.validate()
+                    : '';
+
+            // Same compact horizontal-row card language as ServiceComponent,
+            // so Services and Shops read as one consistent list style.
             return GestureDetector(
               onTap: () {
-                //ShopDetailScreen(shopId: shopData.id.validate()).launch(context);
                 ProviderInfoScreen(providerId: shopData.id.validate())
                     .launch(context);
               },
               child: Container(
-                margin: EdgeInsets.symmetric(horizontal: 0, vertical: 8),
-                decoration: boxDecorationWithRoundedCorners(
-                  borderRadius: radius(),
-                  backgroundColor: context.cardColor,
-                  border: appStore.isDarkMode
-                      ? Border.all(color: context.dividerColor)
-                      : null,
+                margin: EdgeInsets.symmetric(vertical: 8),
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: context.cardColor,
+                  borderRadius: radius(16),
+                  border: Border.all(
+                      color: appStore.isDarkMode
+                          ? context.dividerColor
+                          : context.dividerColor.withValues(alpha: 0.6)),
+                  boxShadow: appStore.isDarkMode
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 10,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
                 ),
-                child: Column(
+                child: Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
-                  mainAxisSize: MainAxisSize.min,
                   children: [
-                    SizedBox(
-                      height: 205,
-                      width: context.width(),
-                      child: Stack(
-                        clipBehavior: Clip.none,
+                    CachedImageWidget(
+                      url: thumbnailUrl,
+                      height: 88,
+                      width: 88,
+                      fit: BoxFit.cover,
+                      radius: 13,
+                    ),
+                    10.width,
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
-                          if (shopData.shopAttachment!.isNotEmpty) ...[
-                            ...List.generate(
-                                shopData.shopAttachment!.length,
-                                (index) => CachedImageWidget(
-                                      url: shopData.shopAttachment![index].url!
-                                              .isNotEmpty
-                                          ? shopData.shopAttachment![index].url
-                                              .toString()
-                                          : '',
-                                      fit: BoxFit.cover,
-                                      height: 180,
-                                      width: context.width(),
-                                      circle: false,
-                                    ).cornerRadiusWithClipRRectOnly(
-                                        topRight: defaultRadius.toInt(),
-                                        topLeft: defaultRadius.toInt()))
-                          ] else
-                            CachedImageWidget(
-                              url: '',
-                              fit: BoxFit.cover,
-                              height: 180,
-                              width: context.width(),
-                              circle: false,
-                            ).cornerRadiusWithClipRRectOnly(
-                                topRight: defaultRadius.toInt(),
-                                topLeft: defaultRadius.toInt())
+                          Text(
+                            shopData.name.validate(),
+                            style: boldTextStyle(size: 13),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                          if (shopData.location.validate().isNotEmpty) ...[
+                            4.height,
+                            Row(
+                              children: [
+                                Icon(Icons.location_on_outlined,
+                                    size: 13, color: appTextSecondaryColor),
+                                3.width,
+                                Flexible(
+                                  child: Text(
+                                    shopData.location.validate(),
+                                    style: secondaryTextStyle(size: 11),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                          7.height,
+                          Row(
+                            children: [
+                              ImageBorder(
+                                  src: shopData.profileImage.validate(),
+                                  height: 18),
+                              5.width,
+                              if (shopData.providerName.validate().isNotEmpty)
+                                Flexible(
+                                  child: Text(
+                                    shopData.providerName.validate(),
+                                    style: secondaryTextStyle(
+                                        size: 11,
+                                        color: appStore.isDarkMode
+                                            ? Colors.white
+                                            : appTextSecondaryColor),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
+                                ),
+                            ],
+                          ),
                         ],
                       ),
                     ),
-                    Marquee(
-                            directionMarguee: DirectionMarguee.oneDirection,
-                            child: Text(shopData.name.validate(),
-                                    style: boldTextStyle())
-                                .paddingSymmetric(horizontal: 0))
-                        .paddingSymmetric(horizontal: 12),
-                    6.height,
-                    Row(
-                      children: [
-                        ImageBorder(
-                            src: shopData.profileImage.validate(), height: 30),
-                        8.width,
-                        // if (widget.serviceData.providerName.validate().isNotEmpty)
-                        Text(
-                          shopData.providerName.validate(),
-                          style: secondaryTextStyle(
-                              size: 12,
-                              color: appStore.isDarkMode
-                                  ? Colors.white
-                                  : appTextSecondaryColor),
-                          maxLines: 2,
-                          overflow: TextOverflow.ellipsis,
-                        ).expand()
-                      ],
-                    ).paddingSymmetric(horizontal: 12, vertical: 12)
                   ],
                 ),
               ),
             );
-            // BlogItemComponent(blogData: snap[index]);
           },
         );
       },
+    );
+  }
+
+  bool get _hasActiveFilters =>
+      filterStore.categoryId.isNotEmpty ||
+      filterStore.providerId.isNotEmpty ||
+      filterStore.ratingId.isNotEmpty ||
+      filterStore.isPriceMin.isNotEmpty ||
+      filterStore.isPriceMax.isNotEmpty ||
+      (filterStore.latitude.isNotEmpty && filterStore.longitude.isNotEmpty);
+
+  Widget _segmentButton({
+    required IconData icon,
+    required String label,
+    required bool selected,
+    required VoidCallback onTap,
+  }) {
+    return GestureDetector(
+      onTap: onTap,
+      child: AnimatedContainer(
+        duration: Duration(milliseconds: 220),
+        curve: Curves.easeOut,
+        padding: EdgeInsets.symmetric(vertical: 11),
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          gradient: selected
+              ? LinearGradient(
+                  colors: [
+                    context.primaryColor,
+                    context.primaryColor.withValues(alpha: 0.8),
+                  ],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                )
+              : null,
+          borderRadius: BorderRadius.circular(12),
+          boxShadow: selected
+              ? [
+                  BoxShadow(
+                    color: context.primaryColor.withValues(alpha: 0.32),
+                    blurRadius: 14,
+                    offset: Offset(0, 5),
+                  ),
+                ]
+              : [],
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              icon,
+              size: 17,
+              color: selected
+                  ? Colors.white
+                  : (appStore.isDarkMode
+                      ? Colors.white70
+                      : appTextSecondaryColor),
+            ),
+            7.width,
+            Text(
+              label,
+              style: boldTextStyle(
+                size: LABEL_TEXT_SIZE,
+                color: selected
+                    ? Colors.white
+                    : (appStore.isDarkMode
+                        ? Colors.white70
+                        : appTextSecondaryColor),
+              ),
+            ),
+          ],
+        ),
+      ),
     );
   }
 
@@ -462,53 +551,104 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
           child: Column(
             children: [
               Container(
-                padding: EdgeInsets.all(16),
+                padding: EdgeInsets.fromLTRB(16, 16, 16, 8),
                 child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
                   children: [
-                    CustomAppTextField(
-                      textFieldType: TextFieldType.OTHER,
-                      focus: myFocusNode,
-                      controller: searchCont,
-                      suffix: CloseButton(
-                        onPressed: () {
+                    Container(
+                      decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.05),
+                            blurRadius: 12,
+                            offset: Offset(0, 4),
+                          ),
+                        ],
+                      ),
+                      child: CustomAppTextField(
+                        textFieldType: TextFieldType.OTHER,
+                        focus: myFocusNode,
+                        controller: searchCont,
+                        suffix: CloseButton(
+                          onPressed: () {
+                            page = 1;
+                            shopPage = 1;
+                            searchCont.clear();
+                            filterStore.setSearch('');
+                            appStore.setLoading(true);
+                            fetchAllServiceData();
+                            fetchShopList();
+                            setState(() {});
+                          },
+                        ).visible(searchCont.text.isNotEmpty),
+                        onFieldSubmitted: (s) {
                           page = 1;
                           shopPage = 1;
-                          searchCont.clear();
-                          filterStore.setSearch('');
+
+                          filterStore.setSearch(s);
                           appStore.setLoading(true);
+
                           fetchAllServiceData();
                           fetchShopList();
                           setState(() {});
                         },
-                      ).visible(searchCont.text.isNotEmpty),
-                      onFieldSubmitted: (s) {
-                        page = 1;
-                        shopPage = 1;
-
-                        filterStore.setSearch(s);
-                        appStore.setLoading(true);
-
-                        fetchAllServiceData();
-                        fetchShopList();
-                        setState(() {});
-                      },
-                      decoration: inputDecoration(context).copyWith(
-                        hintText: "${language.lblSearchFor} $setSearchString",
-                        prefixIcon:
-                            ic_search.iconImage(size: 10).paddingAll(14),
-                        hintStyle: secondaryTextStyle(),
+                        decoration:
+                            inputDecoration(context, borderRadius: 16).copyWith(
+                          hintText: "${language.lblSearchFor} $setSearchString",
+                          prefixIcon:
+                              ic_search.iconImage(size: 10).paddingAll(14),
+                          hintStyle: secondaryTextStyle(),
+                        ),
                       ),
                     ).expand(),
-                    16.width,
+                    14.width,
                     Container(
-                      padding: EdgeInsets.all(10),
-                      decoration:
-                          boxDecorationDefault(color: context.primaryColor),
-                      child: CachedImageWidget(
-                        url: ic_filter,
-                        height: 26,
-                        width: 26,
-                        color: Colors.white,
+                      height: 52,
+                      width: 52,
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          colors: [
+                            context.primaryColor,
+                            context.primaryColor.withValues(alpha: 0.8),
+                          ],
+                          begin: Alignment.topLeft,
+                          end: Alignment.bottomRight,
+                        ),
+                        borderRadius: BorderRadius.circular(16),
+                        boxShadow: [
+                          BoxShadow(
+                            color: context.primaryColor.withValues(alpha: 0.35),
+                            blurRadius: 16,
+                            offset: Offset(0, 6),
+                          ),
+                        ],
+                      ),
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          CachedImageWidget(
+                            url: ic_filter,
+                            height: 22,
+                            width: 22,
+                            color: Colors.white,
+                          ),
+                          if (_hasActiveFilters)
+                            Positioned(
+                              top: 8,
+                              right: 8,
+                              child: Container(
+                                width: 9,
+                                height: 9,
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: Colors.amber,
+                                  border: Border.all(
+                                      color: Colors.white, width: 1.4),
+                                ),
+                              ),
+                            ),
+                        ],
                       ),
                     ).onTap(() {
                       hideKeyboard(context);
@@ -528,65 +668,95 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
                           setState(() {});
                         }
                       });
-                    }, borderRadius: radius())
+                    }, borderRadius: radius(16))
                   ],
                 ),
               ),
-              Row(
-                children: [
-                  GestureDetector(
-                    onTap: () async {
-                      setState(() {
-                        isService = true;
-                      });
-                    },
-                    child: Container(
-                      padding: EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                      alignment: Alignment.center,
-                      decoration: boxDecorationDefault(
-                        color: isService
-                            ? context.primaryColor
-                            : context.cardColor,
+              Container(
+                margin: EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: EdgeInsets.all(4),
+                decoration: BoxDecoration(
+                  color: context.cardColor,
+                  borderRadius: BorderRadius.circular(14),
+                  border: Border.all(color: context.dividerColor),
+                  boxShadow: appStore.isDarkMode
+                      ? null
+                      : [
+                          BoxShadow(
+                            color: Colors.black.withValues(alpha: 0.03),
+                            blurRadius: 8,
+                            offset: Offset(0, 3),
+                          ),
+                        ],
+                ),
+                child: Row(
+                  children: [
+                    _segmentButton(
+                      icon: Icons.room_service_outlined,
+                      label: language.service,
+                      selected: isService,
+                      onTap: () => setState(() => isService = true),
+                    ).expand(),
+                    8.width,
+                    _segmentButton(
+                      icon: Icons.storefront_outlined,
+                      label: language.lblShops,
+                      selected: !isService,
+                      onTap: () => setState(() => isService = false),
+                    ).expand(),
+                  ],
+                ),
+              ),
+              if (!appStore.isLoading)
+                Padding(
+                  padding: EdgeInsets.fromLTRB(16, 4, 16, 4),
+                  child: Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Text(
+                        isService
+                            ? '${serviceList.length} ${language.service}'
+                            : '${shopList.length} ${language.lblShops}',
+                        style: secondaryTextStyle(size: 13),
                       ),
-                      child: Text(language.service,
-                              style: boldTextStyle(
-                                  size: LABEL_TEXT_SIZE,
-                                  color: isService
-                                      ? white
-                                      : appStore.isDarkMode
-                                          ? white
-                                          : black))
-                          .paddingSymmetric(horizontal: 16),
-                    ),
-                  ).expand(),
-                  12.width,
-                  GestureDetector(
-                    onTap: () async {
-                      setState(() {
-                        isService = false;
-                      });
-                    },
-                    child: Container(
-                        padding:
-                            EdgeInsets.symmetric(horizontal: 8, vertical: 8),
-                        alignment: Alignment.center,
-                        decoration: boxDecorationDefault(
-                          color: !isService
-                              ? context.primaryColor
-                              : context.cardColor,
+                      if (_hasActiveFilters)
+                        GestureDetector(
+                          onTap: () {
+                            filterStore.clearFilters();
+                            page = 1;
+                            shopPage = 1;
+                            appStore.setLoading(true);
+                            fetchAllServiceData();
+                            fetchShopList();
+                            setState(() {});
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                                horizontal: 12, vertical: 6),
+                            decoration: BoxDecoration(
+                              color:
+                                  context.primaryColor.withValues(alpha: 0.08),
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(
+                                  color: context.primaryColor
+                                      .withValues(alpha: 0.25)),
+                            ),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Icon(Icons.close,
+                                    size: 13, color: context.primaryColor),
+                                6.width,
+                                Text(language.lblClearFilter,
+                                    style: boldTextStyle(
+                                        size: 12, color: context.primaryColor)),
+                              ],
+                            ),
+                          ),
                         ),
-                        child: Text(language.lblShops,
-                                style: boldTextStyle(
-                                    size: LABEL_TEXT_SIZE,
-                                    color: isService
-                                        ? appStore.isDarkMode
-                                            ? white
-                                            : black
-                                        : white))
-                            .paddingSymmetric(horizontal: 16)),
-                  ).expand(),
-                ],
-              ).paddingSymmetric(horizontal: 16, vertical: 8),
+                    ],
+                  ),
+                ),
               isService
                   ? AnimatedScrollView(
                       keyboardDismissBehavior:
@@ -613,7 +783,7 @@ class _ViewAllServiceScreenState extends State<ViewAllServiceScreen> {
                       },
                       children: [
                         if (widget.categoryId != null) subCategoryWidget(),
-                        16.height,
+                        8.height,
                         SnapHelperWidget(
                           future: futureService,
                           loadingWidget: ViewAllServiceShimmer(),

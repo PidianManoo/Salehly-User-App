@@ -27,6 +27,7 @@ import '../../../utils/app_configuration.dart';
 import '../../bankDetails/view/bank_details.dart';
 import '../../favourite_provider_screen.dart';
 import '../../helpDesk/help_desk_list_screen.dart';
+import '../../refund/refund_request_list_screen.dart';
 import '../component/wallet_history.dart';
 
 class ProfileFragment extends StatefulWidget {
@@ -284,6 +285,13 @@ class ProfileFragmentState extends State<ProfileFragment>
                                 label: language.helpDesk,
                                 onTap: () =>
                                     HelpDeskListScreen().launch(context),
+                              ),
+                            if (appStore.isLoggedIn)
+                              _MenuTile(
+                                iconData: Icons.assignment_return_outlined,
+                                label: language.myRefundRequests,
+                                onTap: () =>
+                                    RefundRequestListScreen().launch(context),
                               ),
                           ]),
 

@@ -22,10 +22,12 @@ class ServiceDetailHeaderComponent extends StatefulWidget {
   }) : super(key: key);
 
   @override
-  State<ServiceDetailHeaderComponent> createState() => _ServiceDetailHeaderComponentState();
+  State<ServiceDetailHeaderComponent> createState() =>
+      _ServiceDetailHeaderComponentState();
 }
 
-class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderComponent> {
+class _ServiceDetailHeaderComponentState
+    extends State<ServiceDetailHeaderComponent> {
   PageController _pageController = PageController();
   int _currentPage = 0;
   Timer? _autoSliderTimer;
@@ -37,9 +39,11 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
   }
 
   void _startAutoSlider() {
-    _autoSliderTimer = Timer.periodic(const Duration(seconds: 4), (Timer timer) {
+    _autoSliderTimer =
+        Timer.periodic(const Duration(seconds: 4), (Timer timer) {
       if (widget.serviceDetail.attachments.validate().isNotEmpty) {
-        _currentPage = (_currentPage + 1) % widget.serviceDetail.attachments!.length;
+        _currentPage =
+            (_currentPage + 1) % widget.serviceDetail.attachments!.length;
         _pageController.animateToPage(
           _currentPage,
           duration: const Duration(milliseconds: 300),
@@ -54,7 +58,8 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
       widget.serviceDetail.isFavourite = 0;
       setState(() {});
 
-      await removeToWishList(serviceId: widget.serviceDetail.id.validate()).then((value) {
+      await removeToWishList(serviceId: widget.serviceDetail.id.validate())
+          .then((value) {
         if (!value) {
           widget.serviceDetail.isFavourite = 1;
           setState(() {});
@@ -64,7 +69,8 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
       widget.serviceDetail.isFavourite = 1;
       setState(() {});
 
-      await addToWishList(serviceId: widget.serviceDetail.id.validate()).then((value) {
+      await addToWishList(serviceId: widget.serviceDetail.id.validate())
+          .then((value) {
         if (!value) {
           widget.serviceDetail.isFavourite = 0;
           setState(() {});
@@ -93,10 +99,21 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
         children: [
           if (attachments.isNotEmpty)
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
-              child: SizedBox(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 16.0, vertical: 10.0),
+              child: Container(
                 height: 250,
                 width: context.width(),
+                decoration: BoxDecoration(
+                  borderRadius: radius(20),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.12),
+                      blurRadius: 20,
+                      offset: const Offset(0, 10),
+                    ),
+                  ],
+                ),
                 child: hasMultipleImages
                     ? PageView.builder(
                         controller: _pageController,
@@ -108,7 +125,7 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
                         },
                         itemBuilder: (context, index) {
                           return CachedImageWidget(
-                            radius: defaultRadius,
+                            radius: 20,
                             url: attachments[index],
                             fit: BoxFit.cover,
                             height: 350,
@@ -116,7 +133,7 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
                         },
                       )
                     : CachedImageWidget(
-                        radius: defaultRadius,
+                        radius: 20,
                         url: attachments.first,
                         fit: BoxFit.cover,
                         height: 350,
@@ -131,18 +148,20 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
               child: Center(
                 child: Container(
                   decoration: BoxDecoration(
-                    color: context.cardColor,
+                    color: Colors.black.withValues(alpha: 0.35),
                     borderRadius: const BorderRadius.all(Radius.circular(15)),
                   ),
-                  padding: const EdgeInsets.symmetric( horizontal: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                   child: Row(
                     mainAxisSize: MainAxisSize.min,
                     children: [
                       DotIndicator(
                         pageController: _pageController,
                         pages: attachments,
-                        indicatorColor: primaryColor,
-                        unselectedIndicatorColor: lineTextColor,
+                        indicatorColor: Colors.white,
+                        unselectedIndicatorColor:
+                            Colors.white.withValues(alpha: 0.4),
                         currentDotSize: 12,
                         dotSize: 8,
                       ),
@@ -156,23 +175,36 @@ class _ServiceDetailHeaderComponentState extends State<ServiceDetailHeaderCompon
             right: 28,
             child: Container(
               padding: const EdgeInsets.all(10),
-              decoration: boxDecorationWithShadow(
-                boxShape: BoxShape.circle,
-                backgroundColor: context.cardColor,
+              decoration: BoxDecoration(
+                shape: BoxShape.circle,
+                color: context.cardColor,
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withValues(alpha: 0.18),
+                    blurRadius: 12,
+                    offset: const Offset(0, 4),
+                  ),
+                ],
               ),
-              child: widget.serviceDetail.isFavourite == 1 ? ic_fill_heart.iconImage(color: favouriteColor, size: 24) : ic_heart.iconImage(color: unFavouriteColor, size: 24),
+              child: widget.serviceDetail.isFavourite == 1
+                  ? ic_fill_heart.iconImage(color: favouriteColor, size: 22)
+                  : ic_heart.iconImage(color: unFavouriteColor, size: 22),
             ).onTap(() async {
               if (appStore.isLoggedIn) {
                 onTapFavourite();
               } else {
                 push(SignInScreen(returnExpected: true)).then((value) {
-                  setStatusBarColor(transparentColor, delayInMilliSeconds: 1000);
+                  setStatusBarColor(transparentColor,
+                      delayInMilliSeconds: 1000);
                   if (value) {
                     onTapFavourite();
                   }
                 });
               }
-            }, highlightColor: Colors.transparent, splashColor: Colors.transparent, hoverColor: Colors.transparent),
+            },
+                highlightColor: Colors.transparent,
+                splashColor: Colors.transparent,
+                hoverColor: Colors.transparent),
           ),
         ],
       ),

@@ -2075,6 +2075,43 @@ class LanguageFr extends BaseLanguage {
   String get refundAmount => 'Montant du remboursement';
 
   @override
+  String get requestRefund => 'Demander un remboursement';
+
+  @override
+  String get refundReason => 'Motif du remboursement';
+
+  @override
+  String get refundRequestSubTitle =>
+      'Dites-nous pourquoi vous demandez un remboursement pour cette réservation.';
+
+  @override
+  String get refundRequestSubmittedMsg =>
+      'Votre demande de remboursement a été envoyée';
+
+  @override
+  String get myRefundRequests => 'Mes demandes de remboursement';
+
+  @override
+  String get noRefundRequestFound => 'Aucune demande de remboursement trouvée';
+
+  @override
+  String get refundForBooking => 'Remboursement pour la réservation';
+
+  @override
+  String get refundApprovedMsg => 'Votre remboursement a été approuvé';
+
+  @override
+  String get refundRejectedMsg =>
+      'Votre demande de remboursement a été refusée';
+
+  @override
+  String get refundAttachmentsLabel => 'Pièces jointes (Facultatif)';
+
+  @override
+  String get maxRefundAttachmentsReached =>
+      "Vous pouvez ajouter jusqu'à 5 photos";
+
+  @override
   String get cancellationFee => "Frais d'annulation";
 
   @override
@@ -2483,7 +2520,8 @@ class LanguageFr extends BaseLanguage {
   String get postJobTitleRequired => 'Le titre du poste est requis';
 
   @override
-  String get whatServiceDoYouNeedToday => 'Quel service avez-vous besoin aujourd\'hui?';
+  String get whatServiceDoYouNeedToday =>
+      'Quel service avez-vous besoin aujourd\'hui?';
 
   @override
   String get whatAreYouLookingFor => 'Que cherchez-vous?';
@@ -2495,10 +2533,12 @@ class LanguageFr extends BaseLanguage {
   String get counterOffer => 'Contre-offre';
 
   @override
-  String get doYouWantToSendCounterOffer => 'Voulez-vous envoyer cette contre-offre à';
+  String get doYouWantToSendCounterOffer =>
+      'Voulez-vous envoyer cette contre-offre à';
 
   @override
-  String get enterCounterOfferPrice => 'Entrez votre prix de contre-offre ci-dessous';
+  String get enterCounterOfferPrice =>
+      'Entrez votre prix de contre-offre ci-dessous';
 
   @override
   String get updateBidPrice => 'Mettre à jour le prix de l\'offre';
@@ -2507,7 +2547,8 @@ class LanguageFr extends BaseLanguage {
   String get acceptBidDialogTitle => 'Accepter l\'offre';
 
   @override
-  String get acceptBidSubtitle => 'Choisissez la date & l\'heure et ajoutez une description';
+  String get acceptBidSubtitle =>
+      'Choisissez la date & l\'heure et ajoutez une description';
 
   @override
   String get bookingDescriptionOptional => 'Description (facultatif)';
@@ -2585,7 +2626,8 @@ class LanguageFr extends BaseLanguage {
       'Supprime définitivement votre compte et toutes les données';
 
   @override
-  String vatLabel(num vatPercentage) => 'TVA (${vatPercentage.toStringAsFixed(0)}%)';
+  String vatLabel(num vatPercentage) =>
+      'TVA (${vatPercentage.toStringAsFixed(0)}%)';
 
   @override
   String saudiVatNote(num vatPercentage, num commissionPercentage) =>

@@ -2016,6 +2016,40 @@ class LanguageAr extends BaseLanguage {
   String get refundAmount => 'مبلغ الاسترداد';
 
   @override
+  String get requestRefund => 'طلب استرداد';
+
+  @override
+  String get refundReason => 'سبب الاسترداد';
+
+  @override
+  String get refundRequestSubTitle =>
+      'أخبرنا لماذا تطلب استرداد الأموال لهذا الحجز.';
+
+  @override
+  String get refundRequestSubmittedMsg => 'تم إرسال طلب الاسترداد الخاص بك';
+
+  @override
+  String get myRefundRequests => 'طلبات الاسترداد الخاصة بي';
+
+  @override
+  String get noRefundRequestFound => 'لم يتم العثور على طلبات استرداد';
+
+  @override
+  String get refundForBooking => 'استرداد للحجز';
+
+  @override
+  String get refundApprovedMsg => 'تمت الموافقة على استرداد أموالك';
+
+  @override
+  String get refundRejectedMsg => 'تم رفض طلب الاسترداد الخاص بك';
+
+  @override
+  String get refundAttachmentsLabel => 'المرفقات (اختياري)';
+
+  @override
+  String get maxRefundAttachmentsReached => 'يمكنك إضافة حتى 5 صور';
+
+  @override
   String get cancellationFee => 'رسوم الإلغاء';
 
   @override
@@ -2424,7 +2458,8 @@ class LanguageAr extends BaseLanguage {
   String get counterOffer => 'عرض مضاد';
 
   @override
-  String get doYouWantToSendCounterOffer => 'هل تريد إرسال هذا العرض المضاد إلى';
+  String get doYouWantToSendCounterOffer =>
+      'هل تريد إرسال هذا العرض المضاد إلى';
 
   @override
   String get enterCounterOfferPrice => 'أدخل سعر عرضك المضاد';
@@ -2522,7 +2557,8 @@ class LanguageAr extends BaseLanguage {
   String get lblDeleteAccountSubtitle => 'حذف حسابك وجميع بياناتك نهائيًا';
 
   @override
-  String vatLabel(num vatPercentage) => 'ضريبة القيمة المضافة (${vatPercentage.toStringAsFixed(0)}%)';
+  String vatLabel(num vatPercentage) =>
+      'ضريبة القيمة المضافة (${vatPercentage.toStringAsFixed(0)}%)';
 
   @override
   String saudiVatNote(num vatPercentage, num commissionPercentage) =>

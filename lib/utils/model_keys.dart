@@ -195,3 +195,10 @@ class HelpDeskKey {
   static String helpdeskActivityAttachment = 'helpdesk_activity_attachment_';
   static String attachmentCount = 'attachment_count';
 }
+
+class RefundRequestKey {
+  static String bookingId = 'booking_id';
+  static String reason = 'reason';
+  static String refundAttachment = 'refund_attachment_';
+  static String attachmentCount = 'attachment_count';
+}

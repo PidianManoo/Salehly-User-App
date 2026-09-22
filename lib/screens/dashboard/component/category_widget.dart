@@ -25,32 +25,37 @@ class CategoryWidget extends StatelessWidget {
 
   Widget buildDefaultComponent(BuildContext context) {
     final double cardWidth = width ?? context.width() / 4 - 20;
-    final double boxSize = cardWidth * 0.82;
-    final double iconSize = boxSize * 0.50;
+    final double boxSize = cardWidth * 0.86;
+    // The icon backdrop — a soft gradient circle tinted with the category's
+    // own color — gives the icon a "designed" home to sit in instead of
+    // floating in a mostly-empty white square.
+    final double backdropSize = boxSize * 0.82;
+    // Sized relative to the backdrop so the artwork reads clearly instead
+    // of looking small and adrift inside its card.
+    final double iconSize = backdropSize * 0.74;
 
-    final Color iconColor = appStore.isDarkMode
-        ? Colors.white
-        : categoryData.color.validate(value: '4285F4').toColor();
+    final Color tintColor =
+        categoryData.color.validate(value: '4285F4').toColor();
 
-    final Widget iconWidget = categoryData.categoryImage.validate().endsWith('.svg')
-        ? SvgPicture.network(
-            categoryData.categoryImage.validate(),
-            height: iconSize,
-            width: iconSize,
-            color: iconColor,
-            placeholderBuilder: (_) => PlaceHolderWidget(
-              height: iconSize,
-              width: iconSize,
-              color: transparentColor,
-            ),
-          )
-        : CachedImageWidget(
-            url: categoryData.categoryImage.validate(),
-            fit: BoxFit.contain,
-            width: iconSize,
-            height: iconSize,
-            placeHolderImage: '',
-          );
+    final Widget iconWidget =
+        categoryData.categoryImage.validate().endsWith('.svg')
+            ? SvgPicture.network(
+                categoryData.categoryImage.validate(),
+                height: iconSize,
+                width: iconSize,
+                placeholderBuilder: (_) => PlaceHolderWidget(
+                  height: iconSize,
+                  width: iconSize,
+                  color: transparentColor,
+                ),
+              )
+            : CachedImageWidget(
+                url: categoryData.categoryImage.validate(),
+                fit: BoxFit.contain,
+                width: iconSize,
+                height: iconSize,
+                placeHolderImage: '',
+              );
 
     return SizedBox(
       width: cardWidth,
@@ -65,32 +70,43 @@ class CategoryWidget extends StatelessWidget {
               color: appStore.isDarkMode
                   ? Colors.white.withValues(alpha: 0.07)
                   : Colors.white,
-              borderRadius: radius(18),
+              borderRadius: radius(20),
               border: Border.all(
                 color: appStore.isDarkMode
                     ? Colors.white.withValues(alpha: 0.10)
-                    : Colors.grey.shade200,
+                    : tintColor.withValues(alpha: 0.12),
                 width: 1.2,
               ),
               boxShadow: [
                 BoxShadow(
-                  color: Colors.black.withValues(
-                      alpha: appStore.isDarkMode ? 0.22 : 0.09),
-                  blurRadius: 12,
+                  color: appStore.isDarkMode
+                      ? Colors.black.withValues(alpha: 0.28)
+                      : tintColor.withValues(alpha: 0.18),
+                  blurRadius: 16,
                   spreadRadius: 0,
-                  offset: Offset(0, 4),
+                  offset: Offset(0, 6),
                 ),
               ],
             ),
-            child: Center(child: iconWidget),
+            child: Center(
+              child: SizedBox(
+                width: backdropSize,
+                height: backdropSize,
+                child: Center(child: iconWidget),
+              ),
+            ),
           ),
 
-          10.height,
+          12.height,
 
           // Name
           Text(
             categoryData.name.validate(),
-            style: boldTextStyle(size: 11),
+            style: boldTextStyle(
+              size: 12,
+              letterSpacing: 0.1,
+              color: appStore.isDarkMode ? Colors.white : Colors.black87,
+            ),
             textAlign: TextAlign.center,
             maxLines: 2,
             overflow: TextOverflow.ellipsis,

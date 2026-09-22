@@ -20,13 +20,19 @@ class BookingDetailProviderWidget extends StatefulWidget {
   final bool providerIsHandyman;
   final BookingData? bookingDetail;
 
-  BookingDetailProviderWidget({required this.providerData, this.canCustomerContact = false, this.providerIsHandyman = false, this.bookingDetail});
+  BookingDetailProviderWidget(
+      {required this.providerData,
+      this.canCustomerContact = false,
+      this.providerIsHandyman = false,
+      this.bookingDetail});
 
   @override
-  BookingDetailProviderWidgetState createState() => BookingDetailProviderWidgetState();
+  BookingDetailProviderWidgetState createState() =>
+      BookingDetailProviderWidgetState();
 }
 
-class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget> {
+class BookingDetailProviderWidgetState
+    extends State<BookingDetailProviderWidget> {
   UserData userData = UserData();
 
   bool isChattingAllow = false;
@@ -54,13 +60,29 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
   Widget build(BuildContext context) {
     return Container(
       padding: EdgeInsets.all(16),
-      decoration: boxDecorationDefault(color: context.cardColor,border: appStore.isDarkMode ? Border.all(color: context.dividerColor) : null,),
+      decoration: boxDecorationDefault(
+        color: context.cardColor,
+        borderRadius: radius(18),
+        border: appStore.isDarkMode
+            ? Border.all(color: context.dividerColor)
+            : null,
+        boxShadow: appStore.isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 12,
+                  offset: Offset(0, 5),
+                ),
+              ],
+      ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Row(
             children: [
-              ImageBorder(src: widget.providerData.profileImage.validate(), height: 60),
+              ImageBorder(
+                  src: widget.providerData.profileImage.validate(), height: 60),
               16.width,
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
@@ -69,32 +91,61 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                     children: [
                       Row(
                         children: [
-                          Marquee(child: Text(widget.providerData.displayName.validate(), style: boldTextStyle())).flexible(),
+                          Marquee(
+                                  child: Text(
+                                      widget.providerData.displayName
+                                          .validate(),
+                                      style: boldTextStyle()))
+                              .flexible(),
                           16.width,
-                          Image.asset(ic_verified, height: 16, color: Colors.green).visible(widget.providerData.isVerifyProvider == 1),
+                          Image.asset(ic_verified,
+                                  height: 16, color: Colors.green)
+                              .visible(
+                                  widget.providerData.isVerifyProvider == 1),
                         ],
                       ).expand(),
-                      if (widget.providerIsHandyman && widget.providerData.isProvider)
+                      if (widget.providerIsHandyman &&
+                          widget.providerData.isProvider)
                         GestureDetector(
                           onTap: () async {
                             String phoneNumber = "";
-                            if (widget.providerData.contactNumber.validate().contains('+')) {
-                              phoneNumber = "${widget.providerData.contactNumber.validate().replaceAll('-', '')}";
+                            if (widget.providerData.contactNumber
+                                .validate()
+                                .contains('+')) {
+                              phoneNumber =
+                                  "${widget.providerData.contactNumber.validate().replaceAll('-', '')}";
                             } else {
-                              phoneNumber = "+${widget.providerData.contactNumber.validate().replaceAll('-', '')}";
+                              phoneNumber =
+                                  "+${widget.providerData.contactNumber.validate().replaceAll('-', '')}";
                             }
-                            launchUrl(Uri.parse('${getSocialMediaLink(LinkProvider.WHATSAPP)}$phoneNumber'), mode: LaunchMode.externalApplication);
+                            launchUrl(
+                                Uri.parse(
+                                    '${getSocialMediaLink(LinkProvider.WHATSAPP)}$phoneNumber'),
+                                mode: LaunchMode.externalApplication);
                           },
-                          child: CachedImageWidget(url: ic_whatsapp, height: 22, width: 22),
+                          child: CachedImageWidget(
+                              url: ic_whatsapp, height: 22, width: 22),
                         ),
                     ],
                   ),
                   4.height,
                   Row(
                     children: [
-                      Image.asset(ic_star_fill, height: 14, fit: BoxFit.fitWidth, color: getRatingBarColor(widget.providerData.providersServiceRating.validate().toInt())),
+                      Image.asset(ic_star_fill,
+                          height: 14,
+                          fit: BoxFit.fitWidth,
+                          color: getRatingBarColor(widget
+                              .providerData.providersServiceRating
+                              .validate()
+                              .toInt())),
                       4.width,
-                      Text(widget.providerData.providersServiceRating.validate().toStringAsFixed(1).toString(), style: boldTextStyle(color: textSecondaryColor, size: 14)),
+                      Text(
+                          widget.providerData.providersServiceRating
+                              .validate()
+                              .toStringAsFixed(1)
+                              .toString(),
+                          style: boldTextStyle(
+                              color: textSecondaryColor, size: 14)),
                     ],
                   ),
                 ],
@@ -112,7 +163,11 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                     children: [
                       Text(
                         '${language.email}:',
-                        style: boldTextStyle(size: 12, color: appStore.isDarkMode ? textSecondaryColor : textPrimaryColor),
+                        style: boldTextStyle(
+                            size: 12,
+                            color: appStore.isDarkMode
+                                ? textSecondaryColor
+                                : textPrimaryColor),
                       ).expand(),
                       8.width,
                       Expanded(
@@ -123,7 +178,12 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                           },
                           child: Text(
                             widget.providerData.email.validate(),
-                            style: boldTextStyle(size: 12, color: appStore.isDarkMode ? white : textSecondaryColor, weight: FontWeight.w400),
+                            style: boldTextStyle(
+                                size: 12,
+                                color: appStore.isDarkMode
+                                    ? white
+                                    : textSecondaryColor,
+                                weight: FontWeight.w400),
                           ),
                         ),
                       ),
@@ -135,7 +195,11 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                     children: [
                       Text(
                         language.mobile,
-                        style: boldTextStyle(size: 12, color: appStore.isDarkMode ? textSecondaryColor : textPrimaryColor),
+                        style: boldTextStyle(
+                            size: 12,
+                            color: appStore.isDarkMode
+                                ? textSecondaryColor
+                                : textPrimaryColor),
                       ).expand(),
                       8.width,
                       Expanded(
@@ -143,12 +207,18 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                         child: GestureDetector(
                           onTap: () {
                             if (!widget.providerIsHandyman) {
-                              launchCall(widget.providerData.contactNumber.validate());
+                              launchCall(
+                                  widget.providerData.contactNumber.validate());
                             }
                           },
                           child: Text(
                             widget.providerData.contactNumber.validate(),
-                            style: boldTextStyle(size: 12, color: appStore.isDarkMode ? white : textSecondaryColor, weight: FontWeight.w400),
+                            style: boldTextStyle(
+                                size: 12,
+                                color: appStore.isDarkMode
+                                    ? white
+                                    : textSecondaryColor,
+                                weight: FontWeight.w400),
                           ),
                         ),
                       ),
@@ -160,7 +230,11 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                     children: [
                       Text(
                         '${language.hintAddress}:',
-                        style: boldTextStyle(size: 12, color: appStore.isDarkMode ? textSecondaryColor : textPrimaryColor),
+                        style: boldTextStyle(
+                            size: 12,
+                            color: appStore.isDarkMode
+                                ? textSecondaryColor
+                                : textPrimaryColor),
                       ).expand(),
                       8.width,
                       Expanded(
@@ -171,7 +245,12 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                           },
                           child: Text(
                             widget.providerData.address.validate(),
-                            style: boldTextStyle(size: 12, color: appStore.isDarkMode ? white : textSecondaryColor, weight: FontWeight.w400),
+                            style: boldTextStyle(
+                                size: 12,
+                                color: appStore.isDarkMode
+                                    ? white
+                                    : textSecondaryColor,
+                                weight: FontWeight.w400),
                             softWrap: true,
                           ),
                         ),
@@ -191,7 +270,8 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                       children: [
                         ic_calling.iconImage(size: 18, color: Colors.white),
                         8.width,
-                        Text(language.lblCall, style: boldTextStyle(color: white)),
+                        Text(language.lblCall,
+                            style: boldTextStyle(color: white)),
                       ],
                     ).fit(),
                     width: context.width(),
@@ -216,16 +296,24 @@ class BookingDetailProviderWidgetState extends State<BookingDetailProviderWidget
                   color: context.scaffoldBackgroundColor,
                   onTap: () async {
                     toast(language.pleaseWaitWhileWeLoadChatDetails);
-                    UserData? user = await userService.getUserNull(email: widget.providerData.email.validate());
+                    UserData? user = await userService.getUserNull(
+                        email: widget.providerData.email.validate());
                     if (user != null) {
                       Fluttertoast.cancel();
                       if (widget.bookingDetail != null) {
-                        isChattingAllow = widget.bookingDetail!.status == BookingStatusKeys.complete || widget.bookingDetail!.status == BookingStatusKeys.cancelled;
+                        isChattingAllow = widget.bookingDetail!.status ==
+                                BookingStatusKeys.complete ||
+                            widget.bookingDetail!.status ==
+                                BookingStatusKeys.cancelled;
                       }
-                      UserChatScreen(receiverUser: user, isChattingAllow: isChattingAllow).launch(context);
+                      UserChatScreen(
+                              receiverUser: user,
+                              isChattingAllow: isChattingAllow)
+                          .launch(context);
                     } else {
                       Fluttertoast.cancel();
-                      toast("${widget.providerData.firstName} ${language.isNotAvailableForChat}");
+                      toast(
+                          "${widget.providerData.firstName} ${language.isNotAvailableForChat}");
                     }
                   },
                 ).expand(),

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:mobx/mobx.dart';
 import 'package:nb_utils/nb_utils.dart';
-import '../../main.dart';
 import '../../store/place_search_store.dart';
 
 class AheadTextField extends StatefulWidget {
@@ -45,9 +44,8 @@ class _AheadTextFieldState extends State<AheadTextField> {
 
     // React to changes in suggestions
     _suggestionReaction = reaction(
-          (_) => widget.store.hasSuggestions,
-          (hasSuggestions) {
-
+      (_) => widget.store.hasSuggestions,
+      (hasSuggestions) {
         // if (_focusNode.hasFocus) {
         //   _showOverlay();
         // } else {
@@ -123,17 +121,19 @@ class _AheadTextFieldState extends State<AheadTextField> {
                         ),
                         title: Text(
                           widget.store.suggestions[index],
-                          style: boldTextStyle(
-                            size: 10,
-                            weight: FontWeight.w300,
-                          ),
+                          style: widget.suggestionStyle ??
+                              boldTextStyle(
+                                size: 10,
+                                weight: FontWeight.w300,
+                              ),
                         ),
                         onTap: () {
                           _controller.text = widget.store.suggestions[index];
                           _controller.selection = TextSelection.fromPosition(
                             TextPosition(offset: _controller.text.length),
                           );
-                          widget.onSelected?.call(widget.store.suggestions[index]);
+                          widget.onSelected
+                              ?.call(widget.store.suggestions[index]);
                           _hideOverlay();
                         },
                       );
@@ -157,6 +157,14 @@ class _AheadTextFieldState extends State<AheadTextField> {
 
   @override
   Widget build(BuildContext context) {
+    // widget.decoration/textStyle/hintText used to be accepted but silently
+    // ignored here — the field always rendered its own hardcoded style
+    // (including a hint that always said "Search" regardless of hintText,
+    // and black borders that didn't adapt to dark mode) no matter what a
+    // caller passed in.
+    final InputDecoration baseDecoration =
+        widget.decoration ?? const InputDecoration();
+
     return CompositedTransformTarget(
       link: _layerLink,
       child: TextField(
@@ -165,41 +173,30 @@ class _AheadTextFieldState extends State<AheadTextField> {
         maxLines: 1,
         minLines: 1,
         autofocus: false,
-        style: primaryTextStyle(),
-        decoration: InputDecoration(
-            suffixIcon: _controller.text.isNotEmpty
-                ? IconButton(
-              onPressed: () {
-                _controller.clear();
-                widget.store.setSearchText('');
-                widget.store.getSuggestions('');
-                setState(() {
-
-                });
-              },
-              icon: Icon(
-                Icons.close,  // Changed to close icon
-                size: 20,    // Increased size
-                color: Colors.grey, // Added color for better visibility
-              ),
-              constraints: BoxConstraints(
-                minWidth: 32,
-                minHeight: 32,
-              ),
-              padding: EdgeInsets.zero,
-            )
-                : null,
-            contentPadding: EdgeInsets.fromLTRB(12, 12, 12, 12), // Increased padding
-            fillColor: appStore.isDarkMode ? cardDarkColor : cardLightColor,
-            filled: true,
-            hintStyle: boldTextStyle(weight: FontWeight.w400, size: 12),
-            border: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.black.withValues(alpha: .5))),
-            focusedBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.5))),
-            enabledBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.5))),
-            errorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.5))),
-            focusedErrorBorder: OutlineInputBorder(borderRadius: BorderRadius.circular(6), borderSide: BorderSide(color: Colors.black.withValues(alpha: 0.5))),
-            hintText: "Search",
-            helperStyle: primaryTextStyle()),
+        style: widget.textStyle ?? primaryTextStyle(),
+        decoration: baseDecoration.copyWith(
+          hintText: widget.hintText,
+          suffixIcon: _controller.text.isNotEmpty
+              ? IconButton(
+                  onPressed: () {
+                    _controller.clear();
+                    widget.store.setSearchText('');
+                    widget.store.getSuggestions('');
+                    setState(() {});
+                  },
+                  icon: Icon(
+                    Icons.close,
+                    size: 20,
+                    color: Colors.grey,
+                  ),
+                  constraints: BoxConstraints(
+                    minWidth: 32,
+                    minHeight: 32,
+                  ),
+                  padding: EdgeInsets.zero,
+                )
+              : baseDecoration.suffixIcon,
+        ),
         onChanged: (value) {
           widget.store.setSearchText(value);
           widget.store.getSuggestions(value);

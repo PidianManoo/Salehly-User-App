@@ -60,6 +60,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
 
   bool isAcceptedTc = false;
 
+  String get _termsConditionsUrl => appStore.selectedLanguageCode == 'ar'
+      ? 'https://salehly.com/terms-ar'
+      : 'https://salehly.com/terms-en';
+
   bool isFirstTimeValidation = true;
   ValueNotifier _valueNotifier = ValueNotifier(true);
 
@@ -413,7 +417,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
               style: boldTextStyle(color: primaryColor, size: 14),
               recognizer: TapGestureRecognizer()
                 ..onTap = () {
-                  checkIfLink(context, appConfigurationStore.termConditions,
+                  checkIfLink(context, _termsConditionsUrl,
                       title: language.termsCondition);
                 },
             ),

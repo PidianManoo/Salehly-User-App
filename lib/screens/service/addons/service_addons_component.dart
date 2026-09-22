@@ -61,10 +61,13 @@ class _AddonComponentState extends State<AddonComponent> {
           list: [],
           onTap: () {},
         ),
-        isSingleAddon ? buildSingleAddonWidget(widget.serviceAddon[0]) : buildMultipleAddonsWidget(),
+        isSingleAddon
+            ? buildSingleAddonWidget(widget.serviceAddon[0])
+            : buildMultipleAddonsWidget(),
       ],
     ).paddingSymmetric(
-      horizontal: widget.isFromBookingLastStep || widget.isFromBookingDetails ? 0 : 16,
+      horizontal:
+          widget.isFromBookingLastStep || widget.isFromBookingDetails ? 0 : 16,
     );
   }
 
@@ -73,9 +76,20 @@ class _AddonComponentState extends State<AddonComponent> {
       width: context.width(),
       padding: EdgeInsets.all(16),
       decoration: boxDecorationWithRoundedCorners(
-        border: appStore.isDarkMode ? Border.all(color: context.dividerColor) : null,
-        borderRadius: radius(),
+        border: appStore.isDarkMode
+            ? Border.all(color: context.dividerColor)
+            : null,
+        borderRadius: radius(18),
         backgroundColor: context.cardColor,
+        boxShadow: appStore.isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 12,
+                  offset: Offset(0, 5),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -85,7 +99,8 @@ class _AddonComponentState extends State<AddonComponent> {
             children: [
               Expanded(
                 child: Marquee(
-                  directionMarguee: DirectionMarguee.oneDirection, // Scrolling text
+                  directionMarguee:
+                      DirectionMarguee.oneDirection, // Scrolling text
                   child: Text(
                     addon.name.validate(),
                     style: boldTextStyle(),
@@ -119,7 +134,8 @@ class _AddonComponentState extends State<AddonComponent> {
             return Observer(builder: (context) {
               return GestureDetector(
                 onTap: () {
-                  if (!widget.isFromBookingLastStep && !widget.isFromBookingDetails) {
+                  if (!widget.isFromBookingLastStep &&
+                      !widget.isFromBookingDetails) {
                     handleAddRemove(data);
                   }
                 },
@@ -139,9 +155,20 @@ class _AddonComponentState extends State<AddonComponent> {
       margin: EdgeInsets.only(right: 16),
       padding: EdgeInsets.all(16),
       decoration: boxDecorationWithRoundedCorners(
-        border: appStore.isDarkMode ? Border.all(color: context.dividerColor) : null,
-        borderRadius: radius(),
+        border: appStore.isDarkMode
+            ? Border.all(color: context.dividerColor)
+            : null,
+        borderRadius: radius(18),
         backgroundColor: context.cardColor,
+        boxShadow: appStore.isDarkMode
+            ? null
+            : [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.05),
+                  blurRadius: 12,
+                  offset: Offset(0, 5),
+                ),
+              ],
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -183,7 +210,9 @@ class _AddonComponentState extends State<AddonComponent> {
       padding: EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       child: Center(
         child: Text(
-          data.isSelected ? language.remove : language.add, // Toggle between Add and Remove
+          data.isSelected
+              ? language.remove
+              : language.add, // Toggle between Add and Remove
           textAlign: TextAlign.center,
           style: boldTextStyle(color: context.primaryColor, size: 12),
         ),
@@ -193,7 +222,8 @@ class _AddonComponentState extends State<AddonComponent> {
 
   void handleAddRemove(Serviceaddon data) {
     data.isSelected = !data.isSelected;
-    selectedServiceAddon = widget.serviceAddon.where((p0) => p0.isSelected).toList();
+    selectedServiceAddon =
+        widget.serviceAddon.where((p0) => p0.isSelected).toList();
     widget.onSelectionChange?.call(selectedServiceAddon);
     setState(() {});
   }

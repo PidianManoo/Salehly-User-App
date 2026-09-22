@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io';
 import 'dart:math';
 
@@ -164,6 +165,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
               },
               onSuccess: (response) {
                 print('${language.paymentSuccessful}: ${response.id}');
+                print(
+                    'Moyasar full response: ${jsonEncode(response.toJson())}');
                 // Handle successful payment
               },
               onError: (error) {
@@ -430,6 +433,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
             : SERVICE_PAYMENT_STATUS_PAID,
         txnId: '',
       );
+    } else {
+      // No branch above matched this gateway's type (e.g. MyFatoorah, whose
+      // handler is commented out above) — without this, the loading
+      // spinner set at the top of this method would spin forever with no
+      // way for the user to recover except backing out of the screen.
+      appStore.setLoading(false);
+      toast(language.somethingWentWrong);
     }
   }
 
@@ -536,8 +546,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               size: 13),
                         ),
                         Container(
-                          padding: EdgeInsets.symmetric(
-                              horizontal: 10, vertical: 4),
+                          padding:
+                              EdgeInsets.symmetric(horizontal: 10, vertical: 4),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.18),
                             borderRadius: BorderRadius.circular(20),
@@ -558,9 +568,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                           size: 32,
                           fontFamily: saudiRiyalsFontFamily),
                     ),
-                    if (widget.bookings.service?.name
-                            .validate()
-                            .isNotEmpty ==
+                    if (widget.bookings.service?.name.validate().isNotEmpty ==
                         true) ...[
                       10.height,
                       Container(
@@ -571,15 +579,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       Row(
                         children: [
                           Icon(Icons.home_repair_service_rounded,
-                              color:
-                                  Colors.white.withValues(alpha: 0.75),
+                              color: Colors.white.withValues(alpha: 0.75),
                               size: 14),
                           6.width,
                           Text(
                             widget.bookings.service!.name.validate(),
                             style: secondaryTextStyle(
-                                color:
-                                    Colors.white.withValues(alpha: 0.82),
+                                color: Colors.white.withValues(alpha: 0.82),
                                 size: 13),
                           ).expand(),
                         ],
@@ -598,8 +604,8 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   borderRadius: BorderRadius.circular(16),
                   boxShadow: [
                     BoxShadow(
-                      color: Colors.black.withValues(
-                          alpha: appStore.isDarkMode ? 0.20 : 0.06),
+                      color: Colors.black
+                          .withValues(alpha: appStore.isDarkMode ? 0.20 : 0.06),
                       blurRadius: 12,
                       offset: Offset(0, 4),
                     ),
@@ -610,8 +616,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                   serviceDetail: widget.bookings.service!,
                   taxes: widget.bookings.bookingDetail!.taxes.validate(),
                   couponData: widget.bookings.couponData,
-                  bookingPackage:
-                      widget.bookings.bookingDetail!.bookingPackage,
+                  bookingPackage: widget.bookings.bookingDetail!.bookingPackage,
                   postRequestDetail: widget.bookings.postRequestDetail,
                 ),
               ),
@@ -659,8 +664,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     itemBuilder: (context, index) {
                       PaymentSetting value = list[index];
                       if (value.status.validate() == 0) return Offstage();
-                      final bool isSelected =
-                          currentPaymentMethod == value;
+                      final bool isSelected = currentPaymentMethod == value;
                       return GestureDetector(
                         onTap: () {
                           currentPaymentMethod = value;
@@ -673,15 +677,13 @@ class _PaymentScreenState extends State<PaymentScreen> {
                               horizontal: 14, vertical: 14),
                           decoration: BoxDecoration(
                             color: isSelected
-                                ? context.primaryColor
-                                    .withValues(alpha: 0.06)
+                                ? context.primaryColor.withValues(alpha: 0.06)
                                 : context.cardColor,
                             borderRadius: BorderRadius.circular(14),
                             border: Border.all(
                               color: isSelected
                                   ? context.primaryColor
-                                  : context.dividerColor
-                                      .withValues(alpha: 0.5),
+                                  : context.dividerColor.withValues(alpha: 0.5),
                               width: isSelected ? 1.5 : 1,
                             ),
                             boxShadow: [
@@ -705,8 +707,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                                   borderRadius: BorderRadius.circular(10),
                                 ),
                                 child: Icon(
-                                  _paymentMethodIcon(
-                                      value.type.validate()),
+                                  _paymentMethodIcon(value.type.validate()),
                                   size: 20,
                                   color: isSelected
                                       ? context.primaryColor
@@ -855,8 +856,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                       borderRadius: BorderRadius.circular(14),
                       boxShadow: [
                         BoxShadow(
-                          color:
-                              context.primaryColor.withValues(alpha: 0.38),
+                          color: context.primaryColor.withValues(alpha: 0.38),
                           blurRadius: 14,
                           offset: Offset(0, 5),
                         ),
@@ -865,8 +865,7 @@ class _PaymentScreenState extends State<PaymentScreen> {
                     child: Row(
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
-                        Icon(Icons.lock_rounded,
-                            color: Colors.white, size: 18),
+                        Icon(Icons.lock_rounded, color: Colors.white, size: 18),
                         10.width,
                         Text(
                           "${language.lblPayNow}  ${totalAmount.toPriceFormat()}",

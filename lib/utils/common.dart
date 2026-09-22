@@ -176,7 +176,7 @@ InputDecoration inputDecoration(BuildContext context,
     Color? fillColor,
     Widget? suffixIcon}) {
   return InputDecoration(
-    contentPadding: EdgeInsets.only(left: 12, bottom: 10, top: 10, right: 10),
+    contentPadding: EdgeInsets.only(left: 14, bottom: 14, top: 14, right: 12),
     labelText: labelText,
     labelStyle: secondaryTextStyle(fontFamily: saudiRiyalsFontFamily),
     hintText: hintText,
@@ -185,13 +185,17 @@ InputDecoration inputDecoration(BuildContext context,
     counterText: counter == false ? "" : counterText,
     prefixIcon: prefixIcon,
     suffixIcon: suffixIcon,
+    // A visible (if subtle) outline in every state gives fields definition
+    // instead of relying purely on the fill color to read as a field —
+    // previously every border here was 0-width, so none of them (including
+    // the "focused" one) ever actually rendered.
     enabledBorder: OutlineInputBorder(
       borderRadius: radius(borderRadius ?? defaultRadius),
-      borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+      borderSide: BorderSide(color: context.dividerColor, width: 1.0),
     ),
     focusedErrorBorder: OutlineInputBorder(
       borderRadius: radius(borderRadius ?? defaultRadius),
-      borderSide: BorderSide(color: Colors.red, width: 0.0),
+      borderSide: BorderSide(color: Colors.red, width: 1.6),
     ),
     errorBorder: OutlineInputBorder(
       borderRadius: radius(borderRadius ?? defaultRadius),
@@ -200,17 +204,17 @@ InputDecoration inputDecoration(BuildContext context,
     errorMaxLines: 2,
     border: OutlineInputBorder(
       borderRadius: radius(borderRadius ?? defaultRadius),
-      borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+      borderSide: BorderSide(color: context.dividerColor, width: 1.0),
     ),
     disabledBorder: OutlineInputBorder(
       borderRadius: radius(borderRadius ?? defaultRadius),
-      borderSide: BorderSide(color: Colors.transparent, width: 0.0),
+      borderSide: BorderSide(color: context.dividerColor.withValues(alpha: 0.5), width: 1.0),
     ),
     errorStyle: primaryTextStyle(
         color: Colors.red, size: 12, fontFamily: saudiRiyalsFontFamily),
     focusedBorder: OutlineInputBorder(
       borderRadius: radius(borderRadius ?? defaultRadius),
-      borderSide: BorderSide(color: primaryColor, width: 0.0),
+      borderSide: BorderSide(color: primaryColor, width: 1.6),
     ),
     filled: true,
     fillColor: fillColor ?? context.cardColor,

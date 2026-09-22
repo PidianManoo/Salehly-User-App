@@ -61,7 +61,10 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     get(Uri.parse(url)).then((value) {
       log(value.body);
 
-      String txnId = parseHtmlString(value.body).removeAllWhiteSpace().splitBetween('TransactionNo:', 'InvoiceInformation').trim();
+      String txnId = parseHtmlString(value.body)
+          .removeAllWhiteSpace()
+          .splitBetween('TransactionNo:', 'InvoiceInformation')
+          .trim();
 
       if (txnId.isNotEmpty && txnId.startsWith('#SD')) {
         isInvoiceNumberFound = true;
@@ -77,7 +80,8 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     var request = Request(
       'GET',
       Uri.parse('$SADAD_API_URL/api/transactions/getTransaction'),
-    )..headers.addAll(buildHeaderForSadad(sadadToken: widget.accessToken.validate()));
+    )..headers
+        .addAll(buildHeaderForSadad(sadadToken: widget.accessToken.validate()));
     var params = {
       "transactionno": txnId,
     };
@@ -111,26 +115,57 @@ class _PaymentWebViewScreenState extends State<PaymentWebViewScreen> {
     if (mounted) super.setState(fn);
   }
 
+  // Back (hardware/gesture or the AppBar icon) used to always exit this
+  // screen immediately, discarding an in-progress SADAD checkout. This
+  // steps back through the gateway's own page history first, and only
+  // confirms leaving once there's nowhere left to go back to within it.
+  Future<void> _handleBack() async {
+    if (await controller.canGoBack()) {
+      controller.goBack();
+      return;
+    }
+    if (!mounted) return;
+    showConfirmDialogCustom(
+      context,
+      dialogType: DialogType.CONFIRMATION,
+      title: language.lblCancelPayment,
+      primaryColor: context.primaryColor,
+      positiveText: language.lblYes,
+      negativeText: language.lblCancel,
+      onAccept: (p0) {
+        finish(context, '');
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: appBarWidget(
-        language.payment,
-        color: context.primaryColor,
-        textColor: Colors.white,
-        backWidget: BackWidget(),
-        textSize: APP_BAR_TEXT_SIZE,
-      ),
-      body: SizedBox(
-        height: context.height(),
-        width: context.width(),
-        child: Stack(
-          children: [
-            WebViewWidget(
-              controller: controller,
-            ),
-            Observer(builder: (context) => LoaderWidget().visible(appStore.isLoading)),
-          ],
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (didPop, result) {
+        if (!didPop) _handleBack();
+      },
+      child: Scaffold(
+        appBar: appBarWidget(
+          language.payment,
+          color: context.primaryColor,
+          textColor: Colors.white,
+          backWidget: BackWidget(onPressed: _handleBack),
+          textSize: APP_BAR_TEXT_SIZE,
+        ),
+        body: SizedBox(
+          height: context.height(),
+          width: context.width(),
+          child: Stack(
+            children: [
+              WebViewWidget(
+                controller: controller,
+              ),
+              Observer(
+                  builder: (context) =>
+                      LoaderWidget().visible(appStore.isLoading)),
+            ],
+          ),
         ),
       ),
     );

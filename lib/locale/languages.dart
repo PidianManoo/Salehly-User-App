@@ -1308,6 +1308,28 @@ abstract class BaseLanguage {
 
   String get refundAmount;
 
+  String get requestRefund;
+
+  String get refundReason;
+
+  String get refundRequestSubTitle;
+
+  String get refundRequestSubmittedMsg;
+
+  String get myRefundRequests;
+
+  String get noRefundRequestFound;
+
+  String get refundForBooking;
+
+  String get refundApprovedMsg;
+
+  String get refundRejectedMsg;
+
+  String get refundAttachmentsLabel;
+
+  String get maxRefundAttachmentsReached;
+
   String get cancellationFee;
 
   String get advancedPayment;

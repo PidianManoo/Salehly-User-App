@@ -2079,6 +2079,42 @@ class LanguageDe extends BaseLanguage {
   String get refundAmount => 'Rückerstattungsbetrag';
 
   @override
+  String get requestRefund => 'Rückerstattung anfordern';
+
+  @override
+  String get refundReason => 'Grund für die Rückerstattung';
+
+  @override
+  String get refundRequestSubTitle =>
+      'Teilen Sie uns mit, warum Sie eine Rückerstattung für diese Buchung beantragen.';
+
+  @override
+  String get refundRequestSubmittedMsg =>
+      'Ihre Rückerstattungsanfrage wurde gesendet';
+
+  @override
+  String get myRefundRequests => 'Meine Rückerstattungsanfragen';
+
+  @override
+  String get noRefundRequestFound => 'Keine Rückerstattungsanfragen gefunden';
+
+  @override
+  String get refundForBooking => 'Rückerstattung für Buchung';
+
+  @override
+  String get refundApprovedMsg => 'Ihre Rückerstattung wurde genehmigt';
+
+  @override
+  String get refundRejectedMsg => 'Ihr Rückerstattungsantrag wurde abgelehnt';
+
+  @override
+  String get refundAttachmentsLabel => 'Anhänge (Optional)';
+
+  @override
+  String get maxRefundAttachmentsReached =>
+      'Sie können bis zu 5 Fotos hinzufügen';
+
+  @override
   String get cancellationFee => 'Stornogebühr';
 
   @override
@@ -2591,7 +2627,8 @@ class LanguageDe extends BaseLanguage {
       'Löscht Ihr Konto und alle Daten dauerhaft';
 
   @override
-  String vatLabel(num vatPercentage) => 'MwSt. (${vatPercentage.toStringAsFixed(0)}%)';
+  String vatLabel(num vatPercentage) =>
+      'MwSt. (${vatPercentage.toStringAsFixed(0)}%)';
 
   @override
   String saudiVatNote(num vatPercentage, num commissionPercentage) =>

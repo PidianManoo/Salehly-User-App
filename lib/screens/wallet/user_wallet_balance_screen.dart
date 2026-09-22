@@ -1,4 +1,4 @@
-﻿// ignore_for_file: must_be_immutable
+// ignore_for_file: must_be_immutable
 
 import 'dart:io';
 import 'dart:math';
@@ -458,7 +458,7 @@ class _UserWalletBalanceScreenState extends State<UserWalletBalanceScreen> {
     } else if (value == PAYMENT_METHOD_RAZOR) {
       return razorpay_logo;
     } else if (value == PAYMENT_METHOD_MOYASAR) {
-      return moyasar_logo;
+      return appLogo;
     } else if (value == PAYMENT_METHOD_CINETPAY) {
       return cinetpay_logo;
     } else if (value == PAYMENT_METHOD_FLUTTER_WAVE) {
@@ -506,50 +506,134 @@ class _UserWalletBalanceScreenState extends State<UserWalletBalanceScreen> {
               Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  // Balance hero card
                   Container(
                     width: context.width(),
-                    padding: EdgeInsets.all(16),
-                    color: context.cardColor,
-                    child: Row(
+                    padding: EdgeInsets.fromLTRB(20, 24, 20, 28),
+                    decoration: BoxDecoration(
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          context.primaryColor,
+                          Color.lerp(context.primaryColor, Colors.black, 0.28)!,
+                        ],
+                      ),
+                      borderRadius: BorderRadius.only(
+                        bottomLeft: Radius.circular(28),
+                        bottomRight: Radius.circular(28),
+                      ),
+                      boxShadow: [
+                        BoxShadow(
+                          color: context.primaryColor.withValues(alpha: 0.30),
+                          blurRadius: 20,
+                          offset: Offset(0, 10),
+                        ),
+                      ],
+                    ),
+                    child: Stack(
+                      clipBehavior: Clip.none,
                       children: [
-                        Text(language.balance,
-                                style:
-                                    boldTextStyle(color: context.primaryColor))
-                            .expand(),
-                        Observer(
-                            builder: (context) => PriceWidget(
-                                price: appStore.userWalletAmount,
-                                size: 16,
-                                isBoldText: true,
-                                color: Colors.green)),
+                        Positioned(
+                          top: -30,
+                          right: -30,
+                          child: Container(
+                            width: 120,
+                            height: 120,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.06),
+                            ),
+                          ),
+                        ),
+                        Positioned(
+                          bottom: -40,
+                          left: -20,
+                          child: Container(
+                            width: 100,
+                            height: 100,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.white.withValues(alpha: 0.05),
+                            ),
+                          ),
+                        ),
+                        Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  padding: EdgeInsets.all(10),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white.withValues(alpha: 0.16),
+                                    shape: BoxShape.circle,
+                                  ),
+                                  child: Icon(
+                                      Icons.account_balance_wallet_rounded,
+                                      color: Colors.white,
+                                      size: 20),
+                                ),
+                                10.width,
+                                Text(language.balance,
+                                    style: boldTextStyle(
+                                        color:
+                                            Colors.white.withValues(alpha: 0.9),
+                                        size: 14)),
+                              ],
+                            ),
+                            18.height,
+                            Observer(
+                                builder: (context) => PriceWidget(
+                                    price: appStore.userWalletAmount,
+                                    size: 30,
+                                    isBoldText: true,
+                                    color: Colors.white)),
+                          ],
+                        ),
                       ],
                     ),
                   ),
                   Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      16.height,
-                      Text(language.topUpWallet,
-                          style: boldTextStyle(size: LABEL_TEXT_SIZE)),
-                      8.height,
+                      24.height,
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color:
+                                  context.primaryColor.withValues(alpha: 0.1),
+                              borderRadius: radius(10),
+                            ),
+                            child: Icon(Icons.add_card_rounded,
+                                color: context.primaryColor, size: 18),
+                          ),
+                          10.width,
+                          Text(language.topUpWallet,
+                              style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+                        ],
+                      ),
+                      6.height,
                       Text(language.topUpAmountQuestion,
                           style: secondaryTextStyle()),
                       Container(
                         width: context.width(),
                         margin: EdgeInsets.symmetric(vertical: 20),
-                        padding: EdgeInsets.all(24),
-                        // decoration: BoxDecoration(
-                        //   color: Colors.white,
-                        //   borderRadius: BorderRadius.circular(16),
-                        //   border: Border.all(color: primaryColor),
-                        //   boxShadow: [
-                        //     BoxShadow(
-                        //       color: primaryColor.withAlpha(50),
-                        //       blurRadius: 10,
-                        //       offset: Offset(0, 2),
-                        //     ),
-                        //   ],
-                        // ),
+                        padding: EdgeInsets.all(20),
+                        decoration: BoxDecoration(
+                          color: context.cardColor,
+                          borderRadius: radius(18),
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black.withValues(
+                                  alpha: appStore.isDarkMode ? 0.24 : 0.06),
+                              blurRadius: 16,
+                              offset: Offset(0, 6),
+                            ),
+                          ],
+                        ),
                         child: Column(
                           children: [
                             // Amount Input Field
@@ -557,12 +641,16 @@ class _UserWalletBalanceScreenState extends State<UserWalletBalanceScreen> {
                               padding: EdgeInsets.symmetric(
                                   horizontal: 20, vertical: 16),
                               decoration: BoxDecoration(
-                                color: Colors.grey[50],
-                                borderRadius: BorderRadius.circular(12),
+                                color: appStore.isDarkMode
+                                    ? Colors.white.withValues(alpha: 0.05)
+                                    : Colors.grey[50],
+                                borderRadius: BorderRadius.circular(14),
                                 border: Border.all(
                                   color: walletAmountFocus.hasFocus
                                       ? context.primaryColor
-                                      : Colors.grey[300]!,
+                                      : (appStore.isDarkMode
+                                          ? Colors.white.withValues(alpha: 0.1)
+                                          : Colors.grey[300]!),
                                   width: walletAmountFocus.hasFocus ? 2 : 1,
                                 ),
                               ),
@@ -572,7 +660,9 @@ class _UserWalletBalanceScreenState extends State<UserWalletBalanceScreen> {
                                 focus: walletAmountFocus,
                                 textAlign: TextAlign.center,
                                 textStyle: TextStyle(
-                                  color: Colors.black87,
+                                  color: appStore.isDarkMode
+                                      ? Colors.white
+                                      : Colors.black87,
                                   fontSize: 24,
                                   fontWeight: FontWeight.w600,
                                   fontFamily: saudiRiyalsFontFamily,
@@ -648,38 +738,50 @@ class _UserWalletBalanceScreenState extends State<UserWalletBalanceScreen> {
                                     formattedAmount == walletAmountCont.text;
                                 return Container(
                                   decoration: BoxDecoration(
+                                    gradient: isSelected
+                                        ? LinearGradient(
+                                            begin: Alignment.topLeft,
+                                            end: Alignment.bottomRight,
+                                            colors: [
+                                              context.primaryColor,
+                                              Color.lerp(context.primaryColor,
+                                                  Colors.black, 0.2)!,
+                                            ],
+                                          )
+                                        : null,
                                     color: isSelected
-                                        ? context.primaryColor
-                                        : Colors.white,
-                                    borderRadius: BorderRadius.circular(8),
+                                        ? null
+                                        : (appStore.isDarkMode
+                                            ? Colors.white
+                                                .withValues(alpha: 0.05)
+                                            : context.primaryColor
+                                                .withValues(alpha: 0.05)),
+                                    borderRadius: BorderRadius.circular(10),
                                     border: Border.all(
                                       color: isSelected
-                                          ? context.primaryColor
-                                          : Colors.grey[300]!,
+                                          ? Colors.transparent
+                                          : (appStore.isDarkMode
+                                              ? Colors.white
+                                                  .withValues(alpha: 0.1)
+                                              : context.primaryColor
+                                                  .withValues(alpha: 0.14)),
                                       width: 1,
                                     ),
                                     boxShadow: isSelected
                                         ? [
                                             BoxShadow(
                                               color: context.primaryColor
-                                                  .withOpacity(0.3),
-                                              blurRadius: 8,
-                                              offset: Offset(0, 2),
+                                                  .withValues(alpha: 0.30),
+                                              blurRadius: 10,
+                                              offset: Offset(0, 4),
                                             ),
                                           ]
-                                        : [
-                                            BoxShadow(
-                                              color: Colors.black
-                                                  .withOpacity(0.05),
-                                              blurRadius: 4,
-                                              offset: Offset(0, 1),
-                                            ),
-                                          ],
+                                        : [],
                                   ),
                                   child: Material(
                                     color: Colors.transparent,
                                     child: InkWell(
-                                      borderRadius: BorderRadius.circular(8),
+                                      borderRadius: BorderRadius.circular(10),
                                       onTap: () {
                                         // Format the amount with currency symbol
                                         String formattedAmount = isCurrencyPositionLeft
@@ -688,22 +790,21 @@ class _UserWalletBalanceScreenState extends State<UserWalletBalanceScreen> {
                                         walletAmountCont.text = formattedAmount;
                                         setState(() {});
                                       },
-                                      child: Container(
-                                        // padding: EdgeInsets.symmetric(
-                                        //     horizontal: 12, vertical: 12),
-                                        child: Center(
-                                          child: Text(
-                                            isCurrencyPositionLeft
-                                                ? '${isSaudiRiyalsSymbol ? saudiRiyalsNewSymbol : appConfigurationStore.currencySymbol}${defaultAmounts[index].toString().formatNumberWithComma()}'
-                                                : '${defaultAmounts[index].toString().formatNumberWithComma()}${isSaudiRiyalsSymbol ? saudiRiyalsNewSymbol : appConfigurationStore.currencySymbol}',
-                                            style: TextStyle(
-                                              color: isSelected
-                                                  ? Colors.white
-                                                  : Colors.grey[700],
-                                              fontSize: 14,
-                                              fontWeight: FontWeight.w600,
-                                              fontFamily: saudiRiyalsFontFamily,
-                                            ),
+                                      child: Center(
+                                        child: Text(
+                                          isCurrencyPositionLeft
+                                              ? '${isSaudiRiyalsSymbol ? saudiRiyalsNewSymbol : appConfigurationStore.currencySymbol}${defaultAmounts[index].toString().formatNumberWithComma()}'
+                                              : '${defaultAmounts[index].toString().formatNumberWithComma()}${isSaudiRiyalsSymbol ? saudiRiyalsNewSymbol : appConfigurationStore.currencySymbol}',
+                                          style: TextStyle(
+                                            color: isSelected
+                                                ? Colors.white
+                                                : (appStore.isDarkMode
+                                                    ? Colors.white
+                                                        .withValues(alpha: 0.85)
+                                                    : Colors.grey[700]),
+                                            fontSize: 14,
+                                            fontWeight: FontWeight.w600,
+                                            fontFamily: saudiRiyalsFontFamily,
                                           ),
                                         ),
                                       ),
@@ -715,77 +816,147 @@ class _UserWalletBalanceScreenState extends State<UserWalletBalanceScreen> {
                           ],
                         ),
                       ),
-                      16.height,
-                      Text(language.paymentMethod,
-                          style: boldTextStyle(size: LABEL_TEXT_SIZE)),
-                      4.height,
+                      24.height,
+                      Row(
+                        children: [
+                          Container(
+                            padding: EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color:
+                                  context.primaryColor.withValues(alpha: 0.1),
+                              borderRadius: radius(10),
+                            ),
+                            child: Icon(Icons.credit_card_rounded,
+                                color: context.primaryColor, size: 18),
+                          ),
+                          10.width,
+                          Text(language.paymentMethod,
+                              style: boldTextStyle(size: LABEL_TEXT_SIZE)),
+                        ],
+                      ),
+                      6.height,
                       Text(language.selectYourPaymentMethodToAddBalance,
                           style: secondaryTextStyle()),
-                      4.height,
+                      12.height,
                       SnapHelperWidget<List<PaymentSetting>>(
                         future: future,
                         onSuccess: (list) {
-                          return AnimatedWrap(
-                            itemCount: list.length,
+                          List<PaymentSetting> enabledList = list
+                              .where(
+                                  (element) => element.status.validate() != 0)
+                              .toList();
+
+                          if (enabledList.isEmpty) {
+                            return NoDataWidget(
+                              title: language.lblNoPayments,
+                              imageWidget: EmptyStateWidget(),
+                            );
+                          }
+
+                          return AnimatedListView(
+                            itemCount: enabledList.length,
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
                             listAnimationType: ListAnimationType.FadeIn,
                             fadeInConfiguration:
-                                FadeInConfiguration(duration: 2.seconds),
-                            spacing: 8,
-                            runSpacing: 16,
+                                FadeInConfiguration(duration: 400.milliseconds),
                             itemBuilder: (context, index) {
-                              if (list.isEmpty)
-                                return NoDataWidget(
-                                  title: language.lblNoPayments,
-                                  imageWidget: EmptyStateWidget(),
-                                );
-                              PaymentSetting value = list[index];
-                              if (value.status.validate() == 0)
-                                return Offstage();
+                              PaymentSetting value = enabledList[index];
                               String icon =
                                   getPaymentMethodIcon(value.type.validate());
+                              bool isSelected = currentPaymentMethod == value;
 
-                              return Stack(
-                                children: [
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                        vertical: 8, horizontal: 8),
-                                    child: Container(
-                                      width: context.width() * 0.240,
-                                      height: 60,
-                                      padding: EdgeInsets.symmetric(
-                                          vertical: 8, horizontal: 8),
-                                      decoration: boxDecorationDefault(
-                                        borderRadius: radius(8),
-                                        border: Border.all(color: primaryColor),
+                              return Container(
+                                margin: EdgeInsets.only(
+                                    bottom: index == enabledList.length - 1
+                                        ? 0
+                                        : 10),
+                                padding: EdgeInsets.symmetric(
+                                    vertical: 10, horizontal: 12),
+                                decoration: BoxDecoration(
+                                  color: isSelected
+                                      ? context.primaryColor
+                                          .withValues(alpha: 0.08)
+                                      : context.cardColor,
+                                  borderRadius: radius(14),
+                                  border: Border.all(
+                                    color: isSelected
+                                        ? context.primaryColor
+                                        : (appStore.isDarkMode
+                                            ? Colors.white
+                                                .withValues(alpha: 0.08)
+                                            : Colors.grey.shade200),
+                                    width: isSelected ? 1.4 : 1,
+                                  ),
+                                  boxShadow: [
+                                    BoxShadow(
+                                      color: Colors.black.withValues(
+                                          alpha:
+                                              appStore.isDarkMode ? 0.2 : 0.04),
+                                      blurRadius: 10,
+                                      offset: Offset(0, 3),
+                                    ),
+                                  ],
+                                ),
+                                child: Row(
+                                  children: [
+                                    Container(
+                                      width: 44,
+                                      height: 44,
+                                      padding: EdgeInsets.all(8),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        shape: BoxShape.circle,
+                                        border: Border.all(
+                                          color: Colors.grey.shade200,
+                                        ),
                                       ),
                                       alignment: Alignment.center,
                                       child: icon.isNotEmpty
-                                          ? Image.asset(icon)
-                                          : Text(value.type.validate(),
-                                              style: primaryTextStyle()),
-                                    ).onTap(() {
-                                      currentPaymentMethod = value;
-
-                                      setState(() {});
-                                    }),
-                                  ),
-                                  Positioned(
-                                    top: 0,
-                                    right: 0,
-                                    child: Container(
-                                      padding: currentPaymentMethod == value
-                                          ? EdgeInsets.all(2)
-                                          : EdgeInsets.zero,
-                                      decoration: boxDecorationDefault(
-                                          color: context.primaryColor),
-                                      child: currentPaymentMethod == value
-                                          ? Icon(Icons.done,
-                                              size: 16, color: Colors.white)
-                                          : Offstage(),
+                                          ? Image.asset(icon,
+                                              fit: BoxFit.contain)
+                                          : Icon(Icons.payment,
+                                              color: context.primaryColor,
+                                              size: 20),
                                     ),
-                                  ),
-                                ],
-                              );
+                                    12.width,
+                                    Text(
+                                      value.title.validate().isNotEmpty
+                                          ? value.title.validate()
+                                          : value.type.validate(),
+                                      style: boldTextStyle(size: 14),
+                                    ).expand(),
+                                    12.width,
+                                    AnimatedContainer(
+                                      duration: 200.milliseconds,
+                                      width: 22,
+                                      height: 22,
+                                      decoration: BoxDecoration(
+                                        shape: BoxShape.circle,
+                                        color: isSelected
+                                            ? context.primaryColor
+                                            : Colors.transparent,
+                                        border: Border.all(
+                                          color: isSelected
+                                              ? context.primaryColor
+                                              : (appStore.isDarkMode
+                                                  ? Colors.white
+                                                      .withValues(alpha: 0.3)
+                                                  : Colors.grey.shade400),
+                                          width: 1.6,
+                                        ),
+                                      ),
+                                      child: isSelected
+                                          ? Icon(Icons.done,
+                                              size: 14, color: Colors.white)
+                                          : null,
+                                    ),
+                                  ],
+                                ),
+                              ).onTap(() {
+                                currentPaymentMethod = value;
+                                setState(() {});
+                              });
                             },
                           );
                         },
@@ -801,16 +972,30 @@ class _UserWalletBalanceScreenState extends State<UserWalletBalanceScreen> {
             bottom: 16,
             left: 16,
             right: 16,
-            child: AppButton(
-              width: context.width(),
-              height: 16,
-              color: context.primaryColor,
-              text: language.proceedToPayment,
-              textStyle: boldTextStyle(color: white),
-              onTap: () async {
-                hideKeyboard(context);
-                _handleClick();
-              },
+            child: Container(
+              decoration: BoxDecoration(
+                borderRadius: radius(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: context.primaryColor.withValues(alpha: 0.35),
+                    blurRadius: 16,
+                    offset: Offset(0, 8),
+                  ),
+                ],
+              ),
+              child: AppButton(
+                width: context.width(),
+                height: 54,
+                color: context.primaryColor,
+                elevation: 0,
+                shapeBorder: RoundedRectangleBorder(borderRadius: radius(16)),
+                text: language.proceedToPayment,
+                textStyle: boldTextStyle(color: white, size: 15),
+                onTap: () async {
+                  hideKeyboard(context);
+                  _handleClick();
+                },
+              ),
             ),
           ),
         ],

@@ -17,6 +17,7 @@ import 'package:booking_system_flutter/model/notification_model.dart';
 import 'package:booking_system_flutter/model/post_job_detail_response.dart';
 import 'package:booking_system_flutter/model/provider_info_response.dart';
 import 'package:booking_system_flutter/model/provider_list_model.dart';
+import 'package:booking_system_flutter/model/refund_request_model.dart';
 import 'package:booking_system_flutter/model/service_data_model.dart';
 import 'package:booking_system_flutter/model/service_detail_response.dart';
 import 'package:booking_system_flutter/model/service_response.dart';
@@ -817,6 +818,69 @@ Future<BaseResponseModel> savePayment(Map request) async {
           request: request, method: HttpMethodType.POST)));
 }
 
+//endregion
+
+//region Refund Request Api
+Future<BaseResponseModel> saveRefundRequest(Map request) async {
+  return BaseResponseModel.fromJson(await handleResponse(
+      await buildHttpResponse('refund-request-save',
+          request: request, method: HttpMethodType.POST)));
+}
+
+Future<BaseResponseModel> saveRefundRequestMultiPart({
+  required Map<String, dynamic> request,
+  List<File>? attachments,
+}) async {
+  MultipartRequest multiPartRequest =
+      await getMultiPartRequest('refund-request-save');
+
+  multiPartRequest.fields.addAll(await getMultipartFields(val: request));
+
+  if (attachments.validate().isNotEmpty) {
+    multiPartRequest.files.addAll(await getMultipartImages(
+        files: attachments.validate(),
+        name: RefundRequestKey.refundAttachment));
+    multiPartRequest.fields[RefundRequestKey.attachmentCount] =
+        attachments.validate().length.toString();
+  }
+
+  multiPartRequest.headers.addAll(buildHeaderTokens());
+
+  Response response = await Response.fromStream(await multiPartRequest.send());
+
+  return BaseResponseModel.fromJson(await handleResponse(response));
+}
+
+Future<List<RefundRequestData>> getRefundRequestList({
+  int page = 1,
+  required List<RefundRequestData> refundRequestListData,
+  Function(bool)? lastPageCallback,
+}) async {
+  try {
+    // This endpoint responds with a bare JSON array (no {"data": [...]}
+    // wrapper and no pagination object) — handleResponse hands back
+    // whatever the server sent decoded as-is, so that's a List here.
+    List res = await handleResponse(await buildHttpResponse(
+        'refund-request-list?page=$page&per_page=$PER_PAGE_ITEM',
+        method: HttpMethodType.GET));
+
+    List<RefundRequestData> list =
+        res.map((e) => RefundRequestData.fromJson(e)).toList();
+
+    if (page == 1) refundRequestListData.clear();
+
+    refundRequestListData.addAll(list);
+
+    lastPageCallback?.call(list.length != PER_PAGE_ITEM);
+
+    return refundRequestListData;
+  } catch (e) {
+    rethrow;
+  }
+}
+//endregion
+
+//region Payment Api
 Future<List<PaymentSetting>> getPaymentGateways(
     {bool requireCOD = true,
     bool requireWallet = true,

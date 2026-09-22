@@ -21,6 +21,7 @@ import 'package:booking_system_flutter/screens/booking/component/booking_detail_
 import 'package:booking_system_flutter/screens/booking/component/booking_detail_provider_widget.dart';
 import 'package:booking_system_flutter/screens/booking/component/countdown_component.dart';
 import 'package:booking_system_flutter/screens/booking/component/invoice_request_dialog_component.dart';
+import 'package:booking_system_flutter/screens/booking/component/refund_request_dialog_component.dart';
 import 'package:booking_system_flutter/screens/booking/component/price_common_widget.dart';
 import 'package:booking_system_flutter/screens/booking/component/reason_dialog.dart';
 import 'package:booking_system_flutter/screens/booking/component/service_proof_list_widget.dart';
@@ -1322,7 +1323,8 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
               onTap: () {
                 TrackLocation(
                   bookingId: widget.bookingId,
-                  isHandyman: handymanList.isNotEmpty && res.providerData?.id != handymanList.first.id,
+                  isHandyman: handymanList.isNotEmpty &&
+                      res.providerData?.id != handymanList.first.id,
                 ).launch(context);
               },
               padding: EdgeInsets.only(top: 0, left: 8, right: 8),
@@ -1520,6 +1522,72 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
     );
   }
 
+  /// Every status-driven action button on this screen used to be a plain
+  /// flat AppButton with no icon or shadow — inconsistent with the
+  /// gradient/shadow language used for primary actions elsewhere in the
+  /// app, and each one styled slightly differently from the next. This is
+  /// the single shared look for all of them: colored shadow, icon, and a
+  /// consistent 14px radius, regardless of which status triggered it.
+  Widget _gradientActionButton({
+    required String text,
+    required Color color,
+    required IconData icon,
+    required VoidCallback onTap,
+  }) {
+    return Container(
+      decoration: BoxDecoration(
+        borderRadius: radius(14),
+        boxShadow: [
+          BoxShadow(
+            color: color.withValues(alpha: 0.35),
+            blurRadius: 14,
+            offset: Offset(0, 6),
+          ),
+        ],
+      ),
+      child: AppButton(
+        color: color,
+        elevation: 0,
+        shapeBorder: RoundedRectangleBorder(borderRadius: radius(14)),
+        width: context.width(),
+        onTap: onTap,
+        child: Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(icon, size: 18, color: Colors.white),
+            8.width,
+            Text(text, style: boldTextStyle(color: Colors.white, size: 14)),
+          ],
+        ),
+      ),
+    );
+  }
+
+  /// The same soft tinted-badge treatment used for the "sent invoice" and
+  /// "refund submitted" confirmations, reused here for any other
+  /// non-actionable status message so none of them look like a leftover
+  /// plain text block next to buttons that now all have real styling.
+  Widget _statusBadge(
+      {required String text, required Color color, required IconData icon}) {
+    return Container(
+      width: context.width(),
+      padding: EdgeInsets.symmetric(vertical: 12, horizontal: 14),
+      decoration: BoxDecoration(
+        color: color.withValues(alpha: 0.1),
+        borderRadius: radius(14),
+        border: Border.all(color: color.withValues(alpha: 0.3)),
+      ),
+      child: Row(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Icon(icon, size: 16, color: color),
+          8.width,
+          Text(text, style: boldTextStyle(size: 13, color: color)),
+        ],
+      ),
+    );
+  }
+
   Widget _action({required BookingDetailResponse bookingResponse}) {
     if ((bookingResponse.service != null &&
             bookingResponse.service!.isAdvancePayment &&
@@ -1532,15 +1600,15 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
                     SERVICE_PAYMENT_STATUS_ADVANCE_PAID &&
                 bookingResponse.bookingDetail!.status ==
                     BookingStatusKeys.complete))) {
-      return AppButton(
+      return _gradientActionButton(
         text: bookingResponse.bookingDetail!.paymentStatus ==
                     SERVICE_PAYMENT_STATUS_ADVANCE_PAID &&
                 bookingResponse.bookingDetail!.status ==
                     BookingStatusKeys.complete
             ? language.lblPayNow
             : language.payAdvance,
-        textColor: Colors.white,
         color: Colors.green,
+        icon: Icons.payments_rounded,
         onTap: () {
           PaymentScreen(bookings: bookingResponse, isForAdvancePayment: true)
               .launch(context);
@@ -1549,10 +1617,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
     } else if (bookingResponse.bookingDetail!.status ==
             BookingStatusKeys.pending ||
         bookingResponse.bookingDetail!.status == BookingStatusKeys.accept) {
-      return AppButton(
+      return _gradientActionButton(
         text: language.lblCancelBooking,
-        textColor: Colors.white,
         color: primaryColor,
+        icon: Icons.cancel_outlined,
         onTap: () {
           _handleCancelClick(
               status: bookingResponse,
@@ -1563,10 +1631,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
       );
     } else if (bookingResponse.bookingDetail!.status ==
         BookingStatusKeys.onGoing) {
-      return AppButton(
+      return _gradientActionButton(
         text: language.lblStart,
-        textColor: Colors.white,
         color: Colors.green,
+        icon: Icons.play_arrow_rounded,
         onTap: () {
           _handleStartClick(status: bookingResponse);
         },
@@ -1576,19 +1644,19 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
       return Row(
         children: [
           if (!bookingResponse.service!.isOnlineService.validate())
-            AppButton(
+            _gradientActionButton(
               text: language.lblHold,
-              textColor: Colors.white,
               color: hold,
+              icon: Icons.pause_circle_outline_rounded,
               onTap: () {
                 _handleHoldClick(status: bookingResponse);
               },
             ).expand(),
           if (!bookingResponse.service!.isOnlineService.validate()) 16.width,
-          AppButton(
+          _gradientActionButton(
             text: language.done,
-            textColor: Colors.white,
             color: primaryColor,
+            icon: Icons.check_circle_outline_rounded,
             onTap: () {
               _handleDoneClick(status: bookingResponse);
             },
@@ -1599,19 +1667,19 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
         BookingStatusKeys.hold) {
       return Row(
         children: [
-          AppButton(
+          _gradientActionButton(
             text: language.lblResume,
-            textColor: Colors.white,
             color: primaryColor,
+            icon: Icons.play_circle_outline_rounded,
             onTap: () {
               _handleResumeClick(status: bookingResponse);
             },
           ).expand(),
           16.width,
-          AppButton(
+          _gradientActionButton(
             text: language.lblCancel,
-            textColor: Colors.white,
             color: cancelled,
+            icon: Icons.cancel_outlined,
             onTap: () {
               _handleCancelClick(
                   status: bookingResponse,
@@ -1624,12 +1692,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
       ).paddingOnly(bottom: 16);
     } else if (bookingResponse.bookingDetail!.status ==
         BookingStatusKeys.pendingApproval) {
-      return Container(
-        width: context.width(),
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: context.cardColor),
-        child: Text(language.lblWaitingForResponse, style: boldTextStyle())
-            .center(),
+      return _statusBadge(
+        text: language.lblWaitingForResponse,
+        color: hold,
+        icon: Icons.hourglass_top_rounded,
       );
     } else if (bookingResponse.bookingDetail!.status ==
             BookingStatusKeys.complete &&
@@ -1637,10 +1703,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
             bookingResponse.bookingDetail!.paymentMethod ==
                 PAYMENT_METHOD_COD) &&
         bookingResponse.bookingDetail!.paymentId == null) {
-      return AppButton(
+      return _gradientActionButton(
         text: language.lblPayNow,
-        textColor: Colors.white,
         color: Colors.green,
+        icon: Icons.payments_rounded,
         onTap: () {
           PaymentScreen(bookings: bookingResponse, isForAdvancePayment: false)
               .launch(context);
@@ -1649,10 +1715,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
     } else if (!bookingResponse.bookingDetail!.isFreeService &&
         bookingResponse.bookingDetail!.status == BookingStatusKeys.complete &&
         !isSentInvoiceOnEmail) {
-      return AppButton(
+      return _gradientActionButton(
         text: language.requestInvoice,
-        textColor: Colors.white,
         color: context.primaryColor,
+        icon: Icons.receipt_long_rounded,
         onTap: () async {
           bool? res = await showInDialog(
             context,
@@ -1674,17 +1740,143 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
     } else if (bookingResponse.bookingDetail!.status ==
             BookingStatusKeys.complete &&
         isSentInvoiceOnEmail) {
-      return Container(
-        width: context.width(),
-        padding: EdgeInsets.all(16),
-        decoration: BoxDecoration(color: context.cardColor),
-        child: Text(language.sentInvoiceText,
-                style: boldTextStyle(), textAlign: TextAlign.center)
-            .center(),
+      return _statusBadge(
+        text: language.sentInvoiceText,
+        color: accept,
+        icon: Icons.check_circle_outline_rounded,
       );
     }
 
     return Offstage();
+  }
+
+  /// A secondary action shown below the primary status button for completed,
+  /// paid bookings — separate from _action() above since a refund request is
+  /// an optional extra step (a customer may want an invoice AND to flag an
+  /// issue), not a status-exclusive action like Pay Now/Request Invoice are.
+  ///
+  /// Whether a request already exists — and what happened to it — comes
+  /// straight from the server (has_refund_request/refund_request on the
+  /// booking detail response), not local-only state, so the button stays
+  /// correctly hidden after a request even if the user leaves and reopens
+  /// this screen later.
+  Widget _refundRequestWidget(
+      {required BookingDetailResponse bookingResponse}) {
+    final refundRequest = bookingResponse.refundRequest;
+
+    if (bookingResponse.hasRefundRequest == true && refundRequest != null) {
+      final status = refundRequest.status.validate().toLowerCase();
+
+      if (status == 'approved' ||
+          status == 'accepted' ||
+          status == 'refunded' ||
+          status == 'completed') {
+        return Container(
+          width: context.width(),
+          padding: EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: LinearGradient(
+              colors: [
+                accept.withValues(alpha: 0.14),
+                accept.withValues(alpha: 0.04)
+              ],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+            ),
+            borderRadius: radius(14),
+            border: Border.all(color: accept.withValues(alpha: 0.3)),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                    color: accept.withValues(alpha: 0.15),
+                    shape: BoxShape.circle),
+                child: Icon(Icons.celebration_rounded, color: accept, size: 20),
+              ),
+              12.width,
+              Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(language.refundApprovedMsg,
+                      style: boldTextStyle(size: 13, color: accept)),
+                  if (refundRequest.refundAmount != null) ...[
+                    4.height,
+                    PriceWidget(
+                      price: refundRequest.refundAmount.validate(),
+                      size: 14,
+                      color: accept,
+                    ),
+                  ],
+                ],
+              ).expand(),
+            ],
+          ),
+        );
+      } else if (status == 'rejected' || status == 'declined') {
+        return _statusBadge(
+          text: refundRequest.rejectReason.validate().isNotEmpty
+              ? '${language.refundRejectedMsg}: ${refundRequest.rejectReason.validate()}'
+              : language.refundRejectedMsg,
+          color: rejected,
+          icon: Icons.cancel_outlined,
+        );
+      }
+
+      // Any other in-progress state (typically "pending").
+      return _statusBadge(
+        text: language.refundRequestSubmittedMsg,
+        color: hold,
+        icon: Icons.hourglass_top_rounded,
+      );
+    }
+
+    // A tinted-fill secondary action (not a plain transparent outline) so
+    // it reads as a deliberate, styled button rather than an empty box with
+    // a thin line around it — and uses AppButton (not a raw TextButton) so
+    // its shape actually matches what's set here instead of Material 3's
+    // default stadium (fully-pill) shape overriding it.
+    return AppButton(
+      width: context.width(),
+      height: 46,
+      color: context.primaryColor.withValues(alpha: 0.08),
+      elevation: 0,
+      shapeBorder: RoundedRectangleBorder(
+        borderRadius: radius(14),
+        side: BorderSide(color: context.primaryColor.withValues(alpha: 0.35)),
+      ),
+      onTap: () async {
+        bool? res = await showInDialog(
+          context,
+          contentPadding: EdgeInsets.zero,
+          dialogAnimation: DialogAnimation.SLIDE_TOP_BOTTOM,
+          barrierDismissible: false,
+          builder: (_) => RefundRequestDialogComponent(
+              bookingId: bookingResponse.bookingDetail!.id.validate()),
+        );
+
+        if (res ?? false) {
+          // Re-fetch so has_refund_request/refund_request come back fresh
+          // from the server instead of relying on a local flag that would
+          // reset (and let the button show again) next time this screen
+          // opens.
+          init();
+          setState(() {});
+        }
+      },
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.assignment_return_outlined,
+              size: 16, color: context.primaryColor),
+          8.width,
+          Text(language.requestRefund,
+              style: boldTextStyle(size: 13, color: context.primaryColor)),
+        ],
+      ),
+    );
   }
 
   Widget buildBodyWidget(AsyncSnapshot<BookingDetailResponse> snap) {
@@ -1974,9 +2166,25 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
               ],
             ).expand(),
             SizedBox(
-                    width: MediaQuery.of(context).size.width,
-                    child: _action(bookingResponse: snap.data!))
-                .paddingSymmetric(horizontal: 16.0, vertical: 12.0)
+              width: MediaQuery.of(context).size.width,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  _action(bookingResponse: snap.data!),
+                  // Only offer a refund once there's actually a completed
+                  // payment to refund — a free service, or one that's
+                  // "completed" but still unpaid (e.g. COD not yet
+                  // collected), has nothing to give back.
+                  if (snap.data!.bookingDetail!.status ==
+                          BookingStatusKeys.complete &&
+                      !snap.data!.bookingDetail!.isFreeService &&
+                      snap.data!.bookingDetail!.paymentId != null) ...[
+                    10.height,
+                    _refundRequestWidget(bookingResponse: snap.data!),
+                  ],
+                ],
+              ),
+            ).paddingSymmetric(horizontal: 16.0, vertical: 12.0)
           ],
         ),
       ],
@@ -2040,8 +2248,7 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
   }
 
   void _handleDoneClick({required BookingDetailResponse status}) async {
-    String endDateTime =
-        DateFormat(BOOKING_SAVE_FORMAT).format(DateTime.now());
+    String endDateTime = DateFormat(BOOKING_SAVE_FORMAT).format(DateTime.now());
 
     log('STATUS.BOOKINGDETAIL!.STARTAT: ${status.bookingDetail!.startAt}');
     num durationDiff = DateTime.parse(endDateTime.validate())
@@ -2055,9 +2262,10 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
       BookingUpdateKeys.durationDiff: durationDiff,
       BookingUpdateKeys.reason: DONE,
       CommonKeys.status: BookingStatusKeys.pendingApproval,
-      BookingUpdateKeys.paymentStatus: status.bookingDetail!.isAdvancePaymentDone
-          ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
-          : status.bookingDetail!.paymentStatus.validate(),
+      BookingUpdateKeys.paymentStatus:
+          status.bookingDetail!.isAdvancePaymentDone
+              ? SERVICE_PAYMENT_STATUS_ADVANCE_PAID
+              : status.bookingDetail!.paymentStatus.validate(),
     };
 
     //TODO Complete all service addon on booking
@@ -2362,8 +2570,13 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
               );
             }
 
-            return Scaffold(
-              body: snapWidgetHelper(
+            // AppScaffold (not a bare Scaffold) so the loading shimmer and
+            // any error state still have a back button — previously a user
+            // who hit an error loading a booking had no way back except the
+            // OS back gesture.
+            return AppScaffold(
+              appBarTitle: '',
+              child: snapWidgetHelper(
                 snap,
                 errorBuilder: (error) {
                   return NoDataWidget(

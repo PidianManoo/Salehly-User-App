@@ -136,12 +136,15 @@ class _FilterPriceComponentState extends State<FilterPriceComponent> {
               activeTrackColor: context.primaryColor,
               inactiveTrackColor: context.primaryColor.withOpacity(0.15),
               trackHeight: 4,
-              rangeThumbShape: const RoundRangeSliderThumbShape(enabledThumbRadius: 9),
+              rangeThumbShape:
+                  const RoundRangeSliderThumbShape(enabledThumbRadius: 9),
               overlayShape: const RoundSliderOverlayShape(overlayRadius: 18),
               overlayColor: context.primaryColor.withOpacity(0.15),
-              rangeValueIndicatorShape: const PaddleRangeSliderValueIndicatorShape(),
+              rangeValueIndicatorShape:
+                  const PaddleRangeSliderValueIndicatorShape(),
               valueIndicatorColor: context.primaryColor,
-              valueIndicatorTextStyle: secondaryTextStyle(color: Colors.white, size: 12),
+              valueIndicatorTextStyle:
+                  secondaryTextStyle(color: Colors.white, size: 12),
               showValueIndicator: ShowValueIndicator.always,
             ),
             child: RangeSlider(

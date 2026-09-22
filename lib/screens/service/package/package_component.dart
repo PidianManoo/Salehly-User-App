@@ -39,7 +39,8 @@ class _PackageComponentState extends State<PackageComponent> {
 
   bool _isDateClose(String endDate) {
     final DateTime currentDate = DateTime.now();
-    final DateTime endDateTime = DateFormat('yyyy-MM-dd').parse(endDate); // Ensure the date format matches
+    final DateTime endDateTime = DateFormat('yyyy-MM-dd')
+        .parse(endDate); // Ensure the date format matches
     final difference = endDateTime.difference(currentDate).inDays;
 
     return difference <= 2;
@@ -72,16 +73,29 @@ class _PackageComponentState extends State<PackageComponent> {
               width: context.width(),
               padding: EdgeInsets.all(16),
               decoration: boxDecorationWithRoundedCorners(
-                borderRadius: radius(),
+                borderRadius: radius(18),
                 backgroundColor: context.cardColor,
-                border: appStore.isDarkMode ? Border.all(color: context.dividerColor) : null,
+                border: appStore.isDarkMode
+                    ? Border.all(color: context.dividerColor)
+                    : null,
+                boxShadow: appStore.isDarkMode
+                    ? null
+                    : [
+                        BoxShadow(
+                          color: Colors.black.withValues(alpha: 0.05),
+                          blurRadius: 12,
+                          offset: Offset(0, 5),
+                        ),
+                      ],
               ),
               child: Column(
                 children: [
                   Row(
                     children: [
                       CachedImageWidget(
-                        url: data.imageAttachments.validate().isNotEmpty ? data.imageAttachments!.first.validate() : "",
+                        url: data.imageAttachments.validate().isNotEmpty
+                            ? data.imageAttachments!.first.validate()
+                            : "",
                         height: 60,
                         fit: BoxFit.cover,
                         radius: defaultRadius,
@@ -95,7 +109,8 @@ class _PackageComponentState extends State<PackageComponent> {
                             children: [
                               Marquee(
                                 directionMarguee: DirectionMarguee.oneDirection,
-                                child: Text(data.name.validate(), style: boldTextStyle()),
+                                child: Text(data.name.validate(),
+                                    style: boldTextStyle()),
                               ),
                               10.height,
                               Row(
@@ -117,8 +132,11 @@ class _PackageComponentState extends State<PackageComponent> {
                                     ),
                                   10.width,
                                   Text(
-                                    '${(((data.originalPrice - data.price.validate()) / data.originalPrice) * 100).toStringAsFixed(1)}% off', // Todo translate
-                                    style: TextStyle(fontSize: 12, color: defaultActivityStatus, fontWeight: FontWeight.bold),
+                                    '${(((data.originalPrice - data.price.validate()) / data.originalPrice) * 100).toStringAsFixed(1)}% ${language.lblOff}',
+                                    style: TextStyle(
+                                        fontSize: 12,
+                                        color: defaultActivityStatus,
+                                        fontWeight: FontWeight.bold),
                                   ),
                                 ],
                               ),
@@ -132,20 +150,29 @@ class _PackageComponentState extends State<PackageComponent> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      "${data.serviceList!.length.toString().padLeft(2, '0')} service included", //Todo Language
-                      style: TextStyle(color: lineTextColor, fontWeight: FontWeight.bold, fontSize: 12),
+                      "${data.serviceList!.length.toString().padLeft(2, '0')} ${language.services}",
+                      style: TextStyle(
+                          color: lineTextColor,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 12),
                     ).paddingOnly(left: 75),
                   ),
                   16.height,
                   AppButton(
                     width: context.width(),
+                    shapeBorder:
+                        RoundedRectangleBorder(borderRadius: radius(14)),
                     child: Text(
-                      "Purchase", //Todo language
+                      language.buy,
                       style: boldTextStyle(color: Colors.white),
                     ),
                     color: context.primaryColor,
                     onTap: () async {
-                      PackageDetailScreen(packageData: data, isFromServiceDetail: true, callBack: widget.callBack).launch(context);
+                      PackageDetailScreen(
+                              packageData: data,
+                              isFromServiceDetail: true,
+                              callBack: widget.callBack)
+                          .launch(context);
                     },
                   ),
                   5.height,
@@ -153,7 +180,9 @@ class _PackageComponentState extends State<PackageComponent> {
                     Text(
                       '${language.endOn}: ${formatDate(data.endDate.validate())}',
                       style: boldTextStyle(
-                        color: _isDateClose(data.endDate.validate()) ? cancelled : defaultActivityStatus, // Set color conditionally
+                        color: _isDateClose(data.endDate.validate())
+                            ? cancelled
+                            : defaultActivityStatus, // Set color conditionally
                         size: 12,
                       ),
                     ).paddingTop(2),

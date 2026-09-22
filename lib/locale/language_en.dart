@@ -2043,6 +2043,41 @@ class LanguageEn extends BaseLanguage {
   String get refundAmount => 'Refund Amount';
 
   @override
+  String get requestRefund => 'Request Refund';
+
+  @override
+  String get refundReason => 'Reason for Refund';
+
+  @override
+  String get refundRequestSubTitle =>
+      "Tell us why you're requesting a refund for this booking.";
+
+  @override
+  String get refundRequestSubmittedMsg =>
+      'Your refund request has been submitted';
+
+  @override
+  String get myRefundRequests => 'My Refund Requests';
+
+  @override
+  String get noRefundRequestFound => 'No refund requests found';
+
+  @override
+  String get refundForBooking => 'Refund for Booking';
+
+  @override
+  String get refundApprovedMsg => 'Your refund has been approved';
+
+  @override
+  String get refundRejectedMsg => 'Your refund request was declined';
+
+  @override
+  String get refundAttachmentsLabel => 'Attachments (Optional)';
+
+  @override
+  String get maxRefundAttachmentsReached => 'You can add up to 5 photos';
+
+  @override
   String get cancellationFee => 'Cancellation Fee';
 
   @override
@@ -2455,7 +2490,8 @@ class LanguageEn extends BaseLanguage {
   String get counterOffer => 'Counter Offer';
 
   @override
-  String get doYouWantToSendCounterOffer => 'Do you want to send this counter offer to';
+  String get doYouWantToSendCounterOffer =>
+      'Do you want to send this counter offer to';
 
   @override
   String get enterCounterOfferPrice => 'Enter your counter offer price below';
@@ -2467,7 +2503,8 @@ class LanguageEn extends BaseLanguage {
   String get acceptBidDialogTitle => 'Accept Bid';
 
   @override
-  String get acceptBidSubtitle => 'Choose booking date & time and add a description';
+  String get acceptBidSubtitle =>
+      'Choose booking date & time and add a description';
 
   @override
   String get bookingDescriptionOptional => 'Description (Optional)';
@@ -2554,7 +2591,8 @@ class LanguageEn extends BaseLanguage {
       'Permanently removes your account and all data';
 
   @override
-  String vatLabel(num vatPercentage) => 'VAT (${vatPercentage.toStringAsFixed(0)}%)';
+  String vatLabel(num vatPercentage) =>
+      'VAT (${vatPercentage.toStringAsFixed(0)}%)';
 
   @override
   String saudiVatNote(num vatPercentage, num commissionPercentage) =>
