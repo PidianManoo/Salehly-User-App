@@ -1848,13 +1848,20 @@ class _BookingDetailScreenState extends State<BookingDetailScreen>
         side: BorderSide(color: context.primaryColor.withValues(alpha: 0.35)),
       ),
       onTap: () async {
-        bool? res = await showInDialog(
-          context,
-          contentPadding: EdgeInsets.zero,
-          dialogAnimation: DialogAnimation.SLIDE_TOP_BOTTOM,
+        // Uses the plain showDialog (not showInDialog's animated variant):
+        // that helper's transitionBuilder rebuilds its whole content subtree
+        // on every animation frame instead of caching it, which was racing
+        // with this dialog's nested ListView + Image.file attachment thumbs
+        // and tripping Flutter's layout/semantics assertions on open.
+        bool? res = await showDialog<bool>(
+          context: context,
           barrierDismissible: false,
-          builder: (_) => RefundRequestDialogComponent(
-              bookingId: bookingResponse.bookingDetail!.id.validate()),
+          builder: (_) => Dialog(
+            backgroundColor: Colors.transparent,
+            insetPadding: EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: RefundRequestDialogComponent(
+                bookingId: bookingResponse.bookingDetail!.id.validate()),
+          ),
         );
 
         if (res ?? false) {
