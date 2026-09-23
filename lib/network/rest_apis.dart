@@ -342,16 +342,20 @@ Future<DashboardResponse> userDashboard(
 
   String endPoint = 'dashboard-detail';
 
-  if (isCurrentLocation &&
-      appStore.isLoggedIn &&
-      appStore.userId.validate() != 0) {
-    endPoint =
-        "$endPoint?latitude=$lat&longitude=$long&customer_id=${appStore.userId.validate()}";
-  } else if (isCurrentLocation) {
-    endPoint = "$endPoint?latitude=$lat&longitude=$long";
-  } else if (appStore.isLoggedIn && appStore.userId.validate() != 0) {
-    endPoint = "$endPoint?customer_id=${appStore.userId.validate()}";
+  // Always send the user's coordinates: fall back to the last saved
+  // location when the caller didn't pass one.
+  double latitude = lat ?? getDoubleAsync(LATITUDE);
+  double longitude = long ?? getDoubleAsync(LONGITUDE);
+
+  List<String> params = [];
+  if (latitude != 0 && longitude != 0) {
+    params.add('latitude=$latitude');
+    params.add('longitude=$longitude');
   }
+  if (appStore.isLoggedIn && appStore.userId.validate() != 0) {
+    params.add('customer_id=${appStore.userId.validate()}');
+  }
+  if (params.isNotEmpty) endPoint = '$endPoint?${params.join('&')}';
 
   try {
     final dashboardResponse = DashboardResponse.fromJson(await handleResponse(
@@ -491,6 +495,16 @@ Future<List<ServiceData>> searchServiceAPI({
   String isPriceMaxPara =
       isPriceMax.isNotEmpty ? 'is_price_max=$isPriceMax&' : '';
   String ratingPara = ratingId.isNotEmpty ? 'is_rating=$ratingId&' : '';
+  // Always send the user's coordinates: fall back to the last saved
+  // location when the caller didn't pass one.
+  if (latitude.isEmpty || longitude.isEmpty) {
+    double savedLat = getDoubleAsync(LATITUDE);
+    double savedLong = getDoubleAsync(LONGITUDE);
+    if (savedLat != 0 && savedLong != 0) {
+      latitude = savedLat.toString();
+      longitude = savedLong.toString();
+    }
+  }
   String latitudes = latitude.isNotEmpty ? 'latitude=$latitude&' : '';
   String longitudes = longitude.isNotEmpty ? 'longitude=$longitude&' : '';
   String isFeatures = isFeatured.isNotEmpty ? 'is_featured=$isFeatured&' : '';

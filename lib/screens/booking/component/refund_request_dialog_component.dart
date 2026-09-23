@@ -177,6 +177,10 @@ class _RefundRequestDialogComponentState
           color: context.cardColor,
           borderRadius: radius(20),
         ),
+        width: context.width(),
+        // Clip to the dialog's radius so the blue header fills the rounded
+        // top corners edge-to-edge.
+        clipBehavior: Clip.antiAlias,
         child: SingleChildScrollView(
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -189,7 +193,7 @@ class _RefundRequestDialogComponentState
                   gradient: LinearGradient(
                     colors: [
                       context.primaryColor,
-                      context.primaryColor.withValues(alpha: 0.8)
+                      Color.lerp(context.primaryColor, Colors.white, 0.15)!,
                     ],
                     begin: Alignment.topLeft,
                     end: Alignment.bottomRight,
@@ -257,20 +261,17 @@ class _RefundRequestDialogComponentState
                       ],
                     ),
                     10.height,
-                    SizedBox(
-                      height: 84,
-                      child: ListView.separated(
-                        scrollDirection: Axis.horizontal,
-                        itemCount: attachmentFiles.length +
-                            (attachmentFiles.length < maxAttachments ? 1 : 0),
-                        separatorBuilder: (context, index) => 10.width,
-                        itemBuilder: (context, index) {
-                          if (index == attachmentFiles.length) {
-                            return _addAttachmentTile();
-                          }
-                          return _attachmentThumb(index);
-                        },
-                      ),
+                    // Wrap (not ListView): the dialog measures its content's
+                    // intrinsic width, which lazy viewports can't report.
+                    Wrap(
+                      spacing: 10,
+                      runSpacing: 12,
+                      children: [
+                        for (int i = 0; i < attachmentFiles.length; i++)
+                          _attachmentThumb(i),
+                        if (attachmentFiles.length < maxAttachments)
+                          _addAttachmentTile(),
+                      ],
                     ),
                     22.height,
                     Observer(

@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:booking_system_flutter/component/image_border_component.dart';
 import 'package:booking_system_flutter/main.dart';
 import 'package:booking_system_flutter/screens/auth/sign_in_screen.dart';
@@ -137,46 +135,85 @@ class _DashboardScreenState extends State<DashboardScreen> {
     LiveStream().dispose(LIVESTREAM_FIREBASE);
   }
 
+  Widget _buildNavShell({
+    required BuildContext context,
+    required bool selected,
+    required Widget icon,
+    required String label,
+    required VoidCallback onTap,
+  }) {
+    // The active tab gets a slightly wider slot so its label has breathing
+    // room inside the blue tile instead of touching the edges.
+    return Expanded(
+      flex: selected ? 13 : 10,
+      child: GestureDetector(
+        onTap: onTap,
+        behavior: HitTestBehavior.opaque,
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: AnimatedContainer(
+            duration: const Duration(milliseconds: 280),
+            curve: Curves.easeInOut,
+            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(22),
+              gradient: selected
+                  ? LinearGradient(
+                      begin: Alignment.topLeft,
+                      end: Alignment.bottomRight,
+                      colors: [
+                        Color.lerp(context.primaryColor, Colors.white, 0.12)!,
+                        context.primaryColor,
+                      ],
+                    )
+                  : null,
+              boxShadow: selected
+                  ? [
+                      BoxShadow(
+                        color: context.primaryColor.withValues(alpha: 0.35),
+                        blurRadius: 16,
+                        offset: const Offset(0, 6),
+                      ),
+                    ]
+                  : null,
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                SizedBox(width: 24, height: 24, child: Center(child: icon)),
+                const SizedBox(height: 6),
+                FittedBox(
+                  fit: BoxFit.scaleDown,
+                  child: Text(
+                    label,
+                    maxLines: 1,
+                    style: selected
+                        ? boldTextStyle(color: Colors.white, size: 13)
+                        : primaryTextStyle(
+                            color: appTextSecondaryColor, size: 13),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+
   Widget _buildNavItem(
       BuildContext context, int index, String iconPath, String label) {
     final bool selected = appStore.currentIndex == index;
-    return GestureDetector(
+    return _buildNavShell(
+      context: context,
+      selected: selected,
+      label: label,
       onTap: () => appStore.setCurrentIndex(index),
-      behavior: HitTestBehavior.opaque,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 280),
-        curve: Curves.easeInOut,
-        padding: selected
-            ? const EdgeInsets.symmetric(horizontal: 16, vertical: 10)
-            : const EdgeInsets.all(10),
-        decoration: selected
-            ? BoxDecoration(
-                color: context.primaryColor,
-                borderRadius: BorderRadius.circular(28),
-                boxShadow: [
-                  BoxShadow(
-                    color: context.primaryColor.withValues(alpha: 0.35),
-                    blurRadius: 12,
-                    offset: const Offset(0, 4),
-                  ),
-                ],
-              )
-            : const BoxDecoration(),
-        child: Row(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            SizedBox(
-              width: 20,
-              height: 20,
-              child: iconPath.iconImage(
-                color: selected ? Colors.white : appTextSecondaryColor,
-              ),
-            ),
-            if (selected) ...[
-              const SizedBox(width: 7),
-              Text(label, style: boldTextStyle(color: Colors.white, size: 13)),
-            ],
-          ],
+      icon: SizedBox(
+        width: 22,
+        height: 22,
+        child: iconPath.iconImage(
+          color: selected ? Colors.white : appTextSecondaryColor,
         ),
       ),
     );
@@ -184,57 +221,26 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   Widget _buildProfileNavItem(BuildContext context) {
     final bool selected = appStore.currentIndex == 4;
-    return Observer(builder: (context) {
-      final hasImage =
-          appStore.isLoggedIn && appStore.userProfileImage.isNotEmpty;
-      return GestureDetector(
-        onTap: () => appStore.setCurrentIndex(4),
-        behavior: HitTestBehavior.opaque,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 280),
-          curve: Curves.easeInOut,
-          padding: selected
-              ? const EdgeInsets.symmetric(horizontal: 16, vertical: 10)
-              : const EdgeInsets.all(10),
-          decoration: selected
-              ? BoxDecoration(
-                  color: context.primaryColor,
-                  borderRadius: BorderRadius.circular(28),
-                  boxShadow: [
-                    BoxShadow(
-                      color: context.primaryColor.withValues(alpha: 0.35),
-                      blurRadius: 12,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                )
-              : const BoxDecoration(),
-          child: Row(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              hasImage
-                  ? IgnorePointer(
-                      ignoring: true,
-                      child: ImageBorder(
-                          src: appStore.userProfileImage, height: 20),
-                    )
-                  : SizedBox(
-                      width: 20,
-                      height: 20,
-                      child: ic_profile2.iconImage(
-                        color: selected ? Colors.white : appTextSecondaryColor,
-                      ),
-                    ),
-              if (selected) ...[
-                const SizedBox(width: 7),
-                Text(language.profile,
-                    style: boldTextStyle(color: Colors.white, size: 13)),
-              ],
-            ],
-          ),
-        ),
-      );
-    });
+    final hasImage =
+        appStore.isLoggedIn && appStore.userProfileImage.isNotEmpty;
+    return _buildNavShell(
+      context: context,
+      selected: selected,
+      label: language.profile,
+      onTap: () => appStore.setCurrentIndex(4),
+      icon: hasImage
+          ? IgnorePointer(
+              ignoring: true,
+              child: ImageBorder(src: appStore.userProfileImage, height: 24),
+            )
+          : SizedBox(
+              width: 22,
+              height: 22,
+              child: ic_profile2.iconImage(
+                color: selected ? Colors.white : appTextSecondaryColor,
+              ),
+            ),
+    );
   }
 
   @override
@@ -278,46 +284,33 @@ class _DashboardScreenState extends State<DashboardScreen> {
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(
-                  left: 20, right: 20, bottom: 14, top: 6),
-              child: ClipRRect(
-                borderRadius: BorderRadius.circular(40),
-                child: BackdropFilter(
-                  filter: ImageFilter.blur(sigmaX: 18, sigmaY: 18),
-                  child: Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-                    decoration: BoxDecoration(
-                      color: appStore.isDarkMode
-                          ? scaffoldSecondaryDark.withValues(alpha: 0.80)
-                          : Colors.white.withValues(alpha: 0.80),
-                      borderRadius: BorderRadius.circular(40),
-                      border: Border.all(
-                        color: appStore.isDarkMode
-                            ? Colors.white.withValues(alpha: 0.08)
-                            : Colors.white.withValues(alpha: 0.60),
-                        width: 1.2,
-                      ),
-                      boxShadow: [
-                        BoxShadow(
-                          color: Colors.black.withValues(alpha: 0.10),
-                          blurRadius: 30,
-                          spreadRadius: 0,
-                          offset: const Offset(0, 10),
-                        ),
-                      ],
+                  left: 16, right: 16, bottom: 12, top: 6),
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                decoration: BoxDecoration(
+                  color: appStore.isDarkMode
+                      ? scaffoldSecondaryDark
+                      : Colors.white,
+                  borderRadius: BorderRadius.circular(36),
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black.withValues(alpha: 0.08),
+                      blurRadius: 24,
+                      offset: const Offset(0, 8),
                     ),
-                    child: Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceAround,
-                      children: [
-                        _buildNavItem(context, 0, ic_home, language.home),
-                        _buildNavItem(context, 1, ic_ticket, language.booking),
-                        _buildNavItem(
-                            context, 2, ic_category, language.category),
-                        _buildNavItem(context, 3, ic_chat, language.lblChat),
-                        _buildProfileNavItem(context),
-                      ],
-                    ),
-                  ),
+                  ],
+                ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    _buildNavItem(context, 0, ic_home, language.home),
+                    _buildNavItem(context, 1, ic_ticket, language.booking),
+                    _buildNavItem(
+                        context, 2, ic_category, language.category),
+                    _buildNavItem(context, 3, ic_chat, language.lblChat),
+                    _buildProfileNavItem(context),
+                  ],
                 ),
               ),
             ),

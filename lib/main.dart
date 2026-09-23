@@ -171,12 +171,9 @@ class MyApp extends StatefulWidget {
 }
 
 class _MyAppState extends State<MyApp> {
-  late Future<Color> _materialYouFuture;
-
   @override
   void initState() {
     super.initState();
-    _materialYouFuture = getMaterialYouData();
   }
 
   @override
@@ -187,39 +184,41 @@ class _MyAppState extends State<MyApp> {
   @override
   Widget build(BuildContext context) {
     return RestartAppWidget(
-      child: FutureBuilder<Color>(
-        future: _materialYouFuture,
-        builder: (_, snap) {
-          return Observer(
-            builder: (_) => MaterialApp(
-              debugShowCheckedModeBanner: false,
-              navigatorKey: navigatorKey,
-              // home: DashboardScreen(),
-              home: SplashScreen(),
-              theme: AppTheme.lightTheme(color: snap.data),
-              darkTheme: AppTheme.darkTheme(color: snap.data),
-              themeMode:
-                  appStore.isDarkMode ? ThemeMode.dark : ThemeMode.light,
-              title: APP_NAME,
-              supportedLocales: LanguageDataModel.languageLocales(),
-              localizationsDelegates: [
-                AppLocalizations(),
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-              builder: (context, child) {
-                return MediaQuery(
-                  child: child!,
-                  data: MediaQuery.of(context)
-                      .copyWith(textScaler: TextScaler.linear(1.0)),
-                );
-              },
-              localeResolutionCallback: (locale, supportedLocales) => locale,
-              locale: Locale(appStore.selectedLanguageCode),
-            ),
-          );
-        },
+      child: Observer(
+        builder: (_) => FutureBuilder<Color>(
+          future: getMaterialYouData(),
+          builder: (_, snap) {
+            return Observer(
+              builder: (_) => MaterialApp(
+                debugShowCheckedModeBanner: false,
+                navigatorKey: navigatorKey,
+                // home: DashboardScreen(),
+                home: SplashScreen(),
+                theme: AppTheme.lightTheme(color: snap.data),
+                darkTheme: AppTheme.darkTheme(color: snap.data),
+                themeMode:
+                    appStore.isDarkMode ? ThemeMode.dark : ThemeMode.light,
+                title: APP_NAME,
+                supportedLocales: LanguageDataModel.languageLocales(),
+                localizationsDelegates: [
+                  AppLocalizations(),
+                  GlobalMaterialLocalizations.delegate,
+                  GlobalWidgetsLocalizations.delegate,
+                  GlobalCupertinoLocalizations.delegate,
+                ],
+                builder: (context, child) {
+                  return MediaQuery(
+                    child: child!,
+                    data: MediaQuery.of(context)
+                        .copyWith(textScaler: TextScaler.linear(1.0)),
+                  );
+                },
+                localeResolutionCallback: (locale, supportedLocales) => locale,
+                locale: Locale(appStore.selectedLanguageCode),
+              ),
+            );
+          },
+        ),
       ),
     );
   }
