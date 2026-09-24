@@ -202,6 +202,12 @@ class ProfileFragmentState extends State<ProfileFragment>
                           const SizedBox(height: 10),
 
                           _buildMenuGroup([
+                            if (!appStore.isLoggedIn)
+                              _MenuTile(
+                                assetIcon: setting,
+                                label: language.lblAppSetting,
+                                onTap: () => SettingScreen().launch(context),
+                              ),
                             if (appStore.isLoggedIn &&
                                 appConfigurationStore.isEnableUserWallet)
                               _MenuTile(

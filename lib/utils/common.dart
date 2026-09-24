@@ -143,6 +143,12 @@ List<LanguageDataModel> languageList() {
         languageCode: 'en',
         fullLanguageCode: 'en-US',
         flag: 'assets/flag/ic_us.png'),
+    LanguageDataModel(
+        id: 6,
+        name: 'Urdu',
+        languageCode: 'ur',
+        fullLanguageCode: 'ur-PK',
+        flag: 'assets/flag/ic_pk.png'),
     /*
     LanguageDataModel(
         id: 2,

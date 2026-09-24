@@ -135,6 +135,51 @@ class _DashboardScreenState extends State<DashboardScreen> {
     LiveStream().dispose(LIVESTREAM_FIREBASE);
   }
 
+  static const double _navTileHPadding = 6;
+  static const double _navMaxLabelSize = 12;
+  static const double _navMinLabelSize = 9;
+
+  double _navLabelSize = _navMaxLabelSize;
+  double _navTileMinWidth = 56;
+
+  TextStyle _navLabelStyle({required bool selected, double? size}) {
+    return TextStyle(
+      fontFamily: boldTextStyle().fontFamily,
+      fontSize: size ?? _navLabelSize,
+      fontWeight: selected ? FontWeight.w700 : FontWeight.w500,
+      color: selected ? Colors.white : appTextSecondaryColor,
+      height: 1.2,
+    );
+  }
+
+  /// Picks one label size for every tab so the widest label (measured in
+  /// bold, its widest state) fits inside a single tab slot. Measures with
+  /// the inherited theme style merged in, exactly as the Text renders it.
+  void _computeNavLabelSize(
+      BuildContext context, double slotWidth, List<String> labels) {
+    final double available = slotWidth - (_navTileHPadding * 2) - 4;
+    final TextStyle base = DefaultTextStyle.of(context).style;
+    double widest = 0;
+    for (final label in labels) {
+      final painter = TextPainter(
+        text: TextSpan(
+            text: label,
+            style: base.merge(
+                _navLabelStyle(selected: true, size: _navMaxLabelSize))),
+        maxLines: 1,
+        textDirection: Directionality.of(context),
+        textScaler: TextScaler.noScaling,
+      )..layout();
+      if (painter.width > widest) widest = painter.width;
+      painter.dispose();
+    }
+    _navLabelSize = widest <= available || widest == 0
+        ? _navMaxLabelSize
+        : (_navMaxLabelSize * available / widest)
+            .clamp(_navMinLabelSize, _navMaxLabelSize);
+    _navTileMinWidth = slotWidth < 56 ? slotWidth : 56;
+  }
+
   Widget _buildNavShell({
     required BuildContext context,
     required bool selected,
@@ -142,21 +187,23 @@ class _DashboardScreenState extends State<DashboardScreen> {
     required String label,
     required VoidCallback onTap,
   }) {
-    // The active tab gets a slightly wider slot so its label has breathing
-    // room inside the blue tile instead of touching the edges.
+    // Every tab gets an equal slot and the same label size (computed in
+    // build() so the longest label fits the screen), so labels line up and
+    // are never cut off; the active tab shows a compact tile around them.
     return Expanded(
-      flex: selected ? 13 : 10,
       child: GestureDetector(
         onTap: onTap,
         behavior: HitTestBehavior.opaque,
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 2),
+        child: Center(
+          heightFactor: 1,
           child: AnimatedContainer(
-            duration: const Duration(milliseconds: 280),
-            curve: Curves.easeInOut,
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 12),
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOutCubic,
+            constraints: BoxConstraints(minWidth: _navTileMinWidth),
+            padding: const EdgeInsets.symmetric(
+                horizontal: _navTileHPadding, vertical: 8),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(22),
+              borderRadius: BorderRadius.circular(16),
               gradient: selected
                   ? LinearGradient(
                       begin: Alignment.topLeft,
@@ -170,9 +217,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
               boxShadow: selected
                   ? [
                       BoxShadow(
-                        color: context.primaryColor.withValues(alpha: 0.35),
-                        blurRadius: 16,
-                        offset: const Offset(0, 6),
+                        color: context.primaryColor.withValues(alpha: 0.30),
+                        blurRadius: 10,
+                        offset: const Offset(0, 4),
                       ),
                     ]
                   : null,
@@ -180,17 +227,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                SizedBox(width: 24, height: 24, child: Center(child: icon)),
-                const SizedBox(height: 6),
+                SizedBox(width: 22, height: 22, child: Center(child: icon)),
+                const SizedBox(height: 4),
                 FittedBox(
                   fit: BoxFit.scaleDown,
                   child: Text(
                     label,
                     maxLines: 1,
-                    style: selected
-                        ? boldTextStyle(color: Colors.white, size: 13)
-                        : primaryTextStyle(
-                            color: appTextSecondaryColor, size: 13),
+                    softWrap: false,
+                    textScaler: TextScaler.noScaling,
+                    style: _navLabelStyle(selected: selected),
                   ),
                 ),
               ],
@@ -210,8 +256,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
       label: label,
       onTap: () => appStore.setCurrentIndex(index),
       icon: SizedBox(
-        width: 22,
-        height: 22,
+        width: 20,
+        height: 20,
         child: iconPath.iconImage(
           color: selected ? Colors.white : appTextSecondaryColor,
         ),
@@ -231,11 +277,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
       icon: hasImage
           ? IgnorePointer(
               ignoring: true,
-              child: ImageBorder(src: appStore.userProfileImage, height: 24),
+              child: ImageBorder(src: appStore.userProfileImage, height: 22),
             )
           : SizedBox(
-              width: 22,
-              height: 22,
+              width: 20,
+              height: 20,
               child: ic_profile2.iconImage(
                 color: selected ? Colors.white : appTextSecondaryColor,
               ),
@@ -284,10 +330,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           bottomNavigationBar: SafeArea(
             child: Padding(
               padding: const EdgeInsets.only(
-                  left: 16, right: 16, bottom: 12, top: 6),
+                  left: 10, right: 10, bottom: 12, top: 6),
               child: Container(
                 padding:
-                    const EdgeInsets.symmetric(horizontal: 6, vertical: 10),
+                    const EdgeInsets.symmetric(horizontal: 4, vertical: 8),
                 decoration: BoxDecoration(
                   color: appStore.isDarkMode
                       ? scaffoldSecondaryDark
@@ -301,17 +347,31 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     ),
                   ],
                 ),
-                child: Row(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    _buildNavItem(context, 0, ic_home, language.home),
-                    _buildNavItem(context, 1, ic_ticket, language.booking),
-                    _buildNavItem(
-                        context, 2, ic_category, language.category),
-                    _buildNavItem(context, 3, ic_chat, language.lblChat),
-                    _buildProfileNavItem(context),
-                  ],
-                ),
+                child: LayoutBuilder(builder: (context, constraints) {
+                  _computeNavLabelSize(context, constraints.maxWidth / 5, [
+                    language.home,
+                    language.booking,
+                    language.category,
+                    language.lblChat,
+                    language.profile,
+                  ]);
+                  // LayoutBuilder builds outside the parent Observer, so the
+                  // row needs its own to react to tab changes.
+                  return Observer(
+                    builder: (context) => Row(
+                      crossAxisAlignment: CrossAxisAlignment.center,
+                      children: [
+                        _buildNavItem(context, 0, ic_home, language.home),
+                        _buildNavItem(
+                            context, 1, ic_ticket, language.booking),
+                        _buildNavItem(
+                            context, 2, ic_category, language.category),
+                        _buildNavItem(context, 3, ic_chat, language.lblChat),
+                        _buildProfileNavItem(context),
+                      ],
+                    ),
+                  );
+                }),
               ),
             ),
           ),

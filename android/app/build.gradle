@@ -54,8 +54,8 @@ android {
         applicationId 'com.salehly.user'
         minSdkVersion 26
         targetSdkVersion 36
-        versionCode 22
-        versionName '22'
+        versionCode 23
+        versionName '23'
         multiDexEnabled true
 
          ndk {

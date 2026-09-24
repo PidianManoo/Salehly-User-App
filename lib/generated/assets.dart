@@ -8,6 +8,7 @@ class Assets {
   static const String flagIcDe = 'assets/flag/ic_de.png';
   static const String flagIcFr = 'assets/flag/ic_fr.png';
   static const String flagIcIndia = 'assets/flag/ic_india.png';
+  static const String flagIcPk = 'assets/flag/ic_pk.png';
   static const String flagIcUs = 'assets/flag/ic_us.png';
   static const String fontsInterRegular = 'assets/fonts/Inter-Regular.ttf';
   static const String iconsAirtelLogo = 'assets/icons/airtel_logo.png';
