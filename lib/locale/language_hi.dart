@@ -19,7 +19,7 @@ class LanguageHi extends BaseLanguage {
   String get signIn => 'साइन इन करें';
 
   @override
-  String get enteramount => 'Please enter an amount greater than 0';
+  String get enteramount => 'कृपया 0 से अधिक राशि दर्ज करें';
 
   @override
   String get signUp => 'साइन अप करें';
@@ -2494,20 +2494,20 @@ class LanguageHi extends BaseLanguage {
   String get postJobTitleRequired => 'पोस्ट जॉब शीर्षक आवश्यक है';
 
   @override
-  String get whatServiceDoYouNeedToday => 'What service do you need today?';
+  String get whatServiceDoYouNeedToday => 'आज आपको कौन सी सेवा चाहिए?';
 
   @override
-  String get whatAreYouLookingFor => 'What are you looking for?';
+  String get whatAreYouLookingFor => 'आप क्या खोज रहे हैं?';
 
   @override
-  String get startSearchingYourService => 'Start searching your service';
+  String get startSearchingYourService => 'अपनी सेवा खोजना शुरू करें';
 
   @override
   String get counterOffer => 'प्रति प्रस्ताव';
 
   @override
   String get doYouWantToSendCounterOffer =>
-      'Do you want to send this counter offer to';
+      'क्या आप यह काउंटर ऑफ़र भेजना चाहते हैं';
 
   @override
   String get enterCounterOfferPrice => 'नीचे अपनी काउंटर ऑफर कीमत दर्ज करें';

@@ -149,13 +149,13 @@ List<LanguageDataModel> languageList() {
         languageCode: 'ur',
         fullLanguageCode: 'ur-PK',
         flag: 'assets/flag/ic_pk.png'),
-    /*
     LanguageDataModel(
         id: 2,
         name: 'Hindi',
         languageCode: 'hi',
         fullLanguageCode: 'hi-IN',
         flag: 'assets/flag/ic_india.png'),
+    /*
     LanguageDataModel(
         id: 4,
         name: 'French',

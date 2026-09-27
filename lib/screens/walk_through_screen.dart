@@ -118,26 +118,15 @@ class _WalkThroughScreenState extends State<WalkThroughScreen>
         return PopupMenuItem<LanguageDataModel>(
           value: lang,
           child: Row(
-            mainAxisSize: MainAxisSize.min,
             children: [
               if (lang.flag != null)
                 ClipOval(
-                  child: Image.asset(
-                    lang.flag!,
-                    width: 26,
-                    height: 26,
-                    fit: BoxFit.cover,
-                    errorBuilder: (_, __, ___) =>
-                        SizedBox(width: 26, height: 26),
-                  ),
+                  child: Image.asset(lang.flag!,
+                      width: 26, height: 26, fit: BoxFit.cover),
                 ),
               10.width,
-              Flexible(
-                child: Text(lang.name.validate(),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(fontWeight: FontWeight.w500)),
-              ),
+              Text(lang.name.validate(),
+                  style: TextStyle(fontWeight: FontWeight.w500)),
             ],
           ),
         );

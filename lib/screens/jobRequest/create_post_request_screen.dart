@@ -1,4 +1,4 @@
-﻿import 'dart:async';
+import 'dart:async';
 import 'dart:io';
 
 import 'package:booking_system_flutter/component/base_scaffold_widget.dart';
@@ -49,6 +49,10 @@ class _CreatePostRequestScreenState extends State<CreatePostRequestScreen>
 
   bool _isUrgentBooking = false;
   bool _showBookingTimeError = false;
+
+  /// Locks the Save button once a submit starts, so repeated taps can't
+  /// create duplicate job requests. Released only if the submit fails.
+  bool _isSubmitting = false;
 
   List<ServiceData> myServiceList = [];
   List<ServiceData> selectedServiceList = [];
@@ -103,6 +107,7 @@ class _CreatePostRequestScreenState extends State<CreatePostRequestScreen>
   // ─── Combined submit: saves the add/edit-service form (if used) then the job ──
 
   Future<void> _submitAll() async {
+    if (_isSubmitting) return;
     hideKeyboard(context);
     if (!formKey.currentState!.validate()) return;
     formKey.currentState!.save();
@@ -119,6 +124,7 @@ class _CreatePostRequestScreenState extends State<CreatePostRequestScreen>
       return;
     }
 
+    setState(() => _isSubmitting = true);
     appStore.setLoading(true);
     try {
       if (isAddingOrEditingService) {
@@ -144,9 +150,11 @@ class _CreatePostRequestScreenState extends State<CreatePostRequestScreen>
       final value = await savePostJob(request);
       appStore.setLoading(false);
       toast(value.message.validate());
+      // Keep _isSubmitting true: the screen is closing, so no further taps.
       finish(context, true);
     } catch (e) {
       appStore.setLoading(false);
+      setState(() => _isSubmitting = false);
       toast(e.toString(), print: true);
     }
   }
@@ -189,8 +197,10 @@ class _CreatePostRequestScreenState extends State<CreatePostRequestScreen>
   }
 
   Future<void> _saveServiceForm() async {
-    MultipartRequest multiPartRequest = await getMultiPartRequest('service-save');
-    multiPartRequest.fields[CreateService.name] = selectedCategory!.name.validate();
+    MultipartRequest multiPartRequest =
+        await getMultiPartRequest('service-save');
+    multiPartRequest.fields[CreateService.name] =
+        selectedCategory!.name.validate();
     multiPartRequest.fields[CreateService.description] =
         selectedCategory!.description.validate();
     multiPartRequest.fields[CreateService.type] = SERVICE_TYPE_FIXED;
@@ -256,9 +266,11 @@ class _CreatePostRequestScreenState extends State<CreatePostRequestScreen>
     );
     await completer.future;
 
-    final existingIds = Set<num>.from(myServiceList.map((s) => s.id.validate()));
+    final existingIds =
+        Set<num>.from(myServiceList.map((s) => s.id.validate()));
     await getMyServiceList().then((value) {
-      if (value.userServices != null) myServiceList = value.userServices.validate();
+      if (value.userServices != null)
+        myServiceList = value.userServices.validate();
     });
 
     final newServices =
@@ -766,7 +778,8 @@ class _CreatePostRequestScreenState extends State<CreatePostRequestScreen>
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.add_photo_alternate_rounded, size: 26, color: primaryColor),
+            Icon(Icons.add_photo_alternate_rounded,
+                size: 26, color: primaryColor),
             const SizedBox(height: 8),
             Text(language.chooseImages,
                 style: boldTextStyle(color: primaryColor, size: 13)),
@@ -971,49 +984,61 @@ class _CreatePostRequestScreenState extends State<CreatePostRequestScreen>
           ],
         ),
         child: GestureDetector(
-          onTap: _submitAll,
-          child: Container(
-            height: 54,
-            decoration: BoxDecoration(
-              gradient: LinearGradient(
-                colors: [primaryColor, _darkBlue],
-                begin: Alignment.centerLeft,
-                end: Alignment.centerRight,
-              ),
-              borderRadius: BorderRadius.circular(16),
-              boxShadow: [
-                BoxShadow(
-                  color: primaryColor.withValues(alpha: 0.42),
-                  blurRadius: 18,
-                  offset: const Offset(0, 6),
+          onTap: _isSubmitting ? null : _submitAll,
+          child: AnimatedOpacity(
+            duration: const Duration(milliseconds: 200),
+            opacity: _isSubmitting ? 0.6 : 1,
+            child: Container(
+              height: 54,
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [primaryColor, _darkBlue],
+                  begin: Alignment.centerLeft,
+                  end: Alignment.centerRight,
                 ),
-              ],
-            ),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(Icons.send_rounded, color: white, size: 20),
-                const SizedBox(width: 8),
-                Text(
-                  language.save,
-                  style: boldTextStyle(color: white, size: 16),
-                ),
-                if (selectedServiceList.isNotEmpty) ...[
-                  const SizedBox(width: 8),
-                  Container(
-                    padding:
-                        const EdgeInsets.symmetric(horizontal: 9, vertical: 3),
-                    decoration: BoxDecoration(
-                      color: white.withValues(alpha: 0.25),
-                      borderRadius: BorderRadius.circular(12),
-                    ),
-                    child: Text(
-                      '${selectedServiceList.length}',
-                      style: boldTextStyle(color: white, size: 12),
-                    ),
+                borderRadius: BorderRadius.circular(16),
+                boxShadow: [
+                  BoxShadow(
+                    color: primaryColor.withValues(alpha: 0.42),
+                    blurRadius: 18,
+                    offset: const Offset(0, 6),
                   ),
                 ],
-              ],
+              ),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  if (_isSubmitting)
+                    const SizedBox(
+                      width: 20,
+                      height: 20,
+                      child: CircularProgressIndicator(
+                          strokeWidth: 2.2, color: white),
+                    )
+                  else
+                    Icon(Icons.send_rounded, color: white, size: 20),
+                  const SizedBox(width: 8),
+                  Text(
+                    language.save,
+                    style: boldTextStyle(color: white, size: 16),
+                  ),
+                  if (selectedServiceList.isNotEmpty) ...[
+                    const SizedBox(width: 8),
+                    Container(
+                      padding: const EdgeInsets.symmetric(
+                          horizontal: 9, vertical: 3),
+                      decoration: BoxDecoration(
+                        color: white.withValues(alpha: 0.25),
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: Text(
+                        '${selectedServiceList.length}',
+                        style: boldTextStyle(color: white, size: 12),
+                      ),
+                    ),
+                  ],
+                ],
+              ),
             ),
           ),
         ),
